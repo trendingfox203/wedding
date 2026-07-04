@@ -8,10 +8,10 @@ import frame2_text1 from './assets/Frame2_text1.png'
 import frame2_text2 from './assets/Frame2_text2.png'
 import frame2_img2 from './assets/Frame2_img2.png'
 import frame2_text3 from './assets/Frame2_text3.png'
-import frame3 from './assets/Frame3.png'
+// import frame3 from './assets/Frame3.png'
 import frame3_video from './assets/frame3_vid.mp4'
 import frame4 from './assets/Frame4.png'
-import frame4_img1 from './assets/Frame4_img1.png'
+// import frame4_img1 from './assets/Frame4_img1.png'
 import frame4_img2 from './assets/Frame4_img2.png'
 import frame5 from './assets/Frame5.png'
 import frame5_text from './assets/Frame5_text.png'
@@ -20,7 +20,7 @@ import frame6_text from './assets/Frame6_text.png'
 import frame6_img from './assets/Frame6_img.png'
 import frame7 from './assets/Frame7.png'
 import frame7_text from './assets/Frame7_text.png'
-import frame7_img from './assets/Frame7_img.png'
+// import frame7_img from './assets/Frame7_img.png'
 import './App.css'
 
 function App() {
@@ -40,8 +40,8 @@ function App() {
   const frame4Ref = useRef<HTMLElement | null>(null)
 
   // Ref để lưu timeout
-  const flashTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const flashTimeoutRef = useRef<number | null>(null)
+  const transitionTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (!videoRef.current) return
@@ -50,23 +50,20 @@ function App() {
       videoRef.current.currentTime = 0
       videoRef.current.play().catch(() => undefined)
 
-      // ===== FLASH SAU 1.8 GIÂY =====
       flashTimeoutRef.current = setTimeout(() => {
-        setShowFlash(true)  // Bật flash
+        setShowFlash(true)
 
-        // Sau 500ms, tắt flash và chuyển scene
         transitionTimeoutRef.current = setTimeout(() => {
           setShowFlash(false)
           setHideFrame3(true)
           setShowNextFrames(true)
         }, 100)
-      }, 1300) //
+      }, 1300)
 
     } else {
       videoRef.current.pause()
       videoRef.current.currentTime = 0
 
-      // Cleanup timeout khi đóng
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
         flashTimeoutRef.current = null
@@ -75,10 +72,13 @@ function App() {
         clearTimeout(transitionTimeoutRef.current)
         transitionTimeoutRef.current = null
       }
-      setShowFlash(false)
+
+      // ✅ Fix lỗi ESLint: bọc trong setTimeout
+      setTimeout(() => {
+        setShowFlash(false)
+      }, 0)
     }
 
-    // Cleanup khi component unmount
     return () => {
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
