@@ -194,7 +194,7 @@ input[type="number"]::-webkit-inner-spin-button {
   top: 44.5%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 18%;
+  width: 17%;
   height: auto;
   object-fit: contain;
 }
@@ -209,15 +209,22 @@ input[type="number"]::-webkit-inner-spin-button {
   z-index: 5;
 }
 
-/* ========== HIỆU ỨNG "VIẾT TAY" (từng dòng tự vẽ trái→phải, dùng SVG mask) ========== */
+/* ========== HIỆU ỨNG "DISSOLVE + FADE DOWN" cho f2_img2 ========== */
 .f2_img2 {
-  mask-image: url(#eraserMask);
-  -webkit-mask-image: url(#eraserMask);
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-  -webkit-mask-size: 100% 100%;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translate(-50%, -50%) translateY(-12px);
+  transition:
+    opacity 1s ease,
+    filter 1s ease,
+    transform 1s ease;
   pointer-events: none;
+}
+
+.f2_img2.f2-extra-visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate(-50%, -50%) translateY(0);
 }
 
 /* f2_text3 có đúng 2 dòng chữ - dùng mask riêng 2 nét, viết chậm từng dòng như đang viết tay */
@@ -236,31 +243,6 @@ input[type="number"]::-webkit-inner-spin-button {
   pointer-events: auto;
 }
 
-.handwrite-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-
-.handwrite-path.handwrite-path-active {
-  animation: eraserWipe 0.75s ease-in-out forwards;
-}
-
-.handwrite-path.handwrite-path-active:nth-of-type(1) {
-  animation-delay: 0s;
-}
-.handwrite-path.handwrite-path-active:nth-of-type(2) {
-  animation-delay: 0.22s;
-}
-.handwrite-path.handwrite-path-active:nth-of-type(3) {
-  animation-delay: 0.44s;
-}
-.handwrite-path.handwrite-path-active:nth-of-type(4) {
-  animation-delay: 0.66s;
-}
-.handwrite-path.handwrite-path-active:nth-of-type(5) {
-  animation-delay: 0.88s;
-}
-
 @keyframes eraserWipe {
   to {
     stroke-dashoffset: 0;
@@ -274,14 +256,14 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .text-line-path.text-line-path-active {
-  animation: eraserWipe 1.3s ease-in-out forwards;
+  animation: eraserWipe 1s ease-in-out forwards;
 }
 
 .text-line-path.text-line-path-active:nth-of-type(1) {
   animation-delay: 0.1s;
 }
 .text-line-path.text-line-path-active:nth-of-type(2) {
-  animation-delay: 1s;
+  animation-delay: 0.5s;
   animation-duration: 4s;
 }
 /* frame 3 styles */
@@ -585,6 +567,21 @@ input[type="number"]::-webkit-inner-spin-button {
   color: rgba(255, 255, 255, 0.92);
 }
 
+/* Sau khi chọn Có/Không, thay label + 2 nút bằng 1 dòng gọn để nhường chỗ cho các ô tiếp theo */
+.attend-summary {
+  font-family: "Playfair Display", serif;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.9rem;
+  cursor: pointer;
+}
+
 .frame7-form input,
 .frame7-form select,
 .frame7-form textarea {
@@ -771,7 +768,8 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .frame7-form label,
   .meal-fieldset legend,
-  .frame7-submit {
+  .frame7-submit,
+  .attend-summary {
     font-size: 1.6rem;
   }
 
@@ -803,7 +801,8 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .frame7-form label,
   .meal-fieldset legend,
-  .frame7-submit {
+  .frame7-submit,
+  .attend-summary {
     font-size: 1.3rem;
   }
 
@@ -887,11 +886,11 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .meal-fieldset {
   font-family: "Playfair Display", serif;
-}
+} /*
 .meal-fieldset legend {
   font-family: "Playfair Display", serif;
-  font-size: 2.25rem;
-}
+  font-size: 1.25rem;
+} */
 
 .frame7-form select:focus {
   /* outline: none; */
@@ -929,9 +928,38 @@ input[type="number"]::-webkit-inner-spin-button {
      để lộ khoảng trống màu nền phẳng phía dưới thay vì hoạ tiết. Cho khung cao hơn
      và nền che phủ (cover) trọn khung đó thay vì chỉ scale theo tỉ lệ ảnh gốc. */
   .frame5-section .hero-wrapper,
-  .frame6-section .hero-wrapper,
-  .frame7-section .hero-wrapper {
+  .frame6-section .hero-wrapper {
     min-height: 180vw;
+  }
+
+  /* Frame 7: form RSVP co giãn chiều cao theo lựa chọn (Có/Không, chọn món, dị ứng...)
+     Dùng min-height cố định (vw) để đoán trước không đáng tin cậy - luôn có trường hợp
+     tràn ra ngoài nền. Thay vào đó: đưa f7_text và form vào luồng tài liệu bình thường
+     (bỏ position:absolute) để khung .hero-wrapper tự cao theo đúng nội dung thật,
+     nền (position:absolute + height:100%) sẽ tự phủ theo đúng chiều cao đó. */
+  .frame7-section .hero-wrapper {
+    min-height: 0;
+  }
+
+  .frame7-section .f7_text {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    display: block;
+    width: 80vw;
+    margin: 48px auto 24px;
+    z-index: 1;
+  }
+
+  .frame7-form {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: min(64%, 90vw);
+    margin: 0 auto 48px;
+    gap: 4%;
   }
 
   .f5_background,
@@ -954,4 +982,7 @@ input[type="number"]::-webkit-inner-spin-button {
     opacity: 1;
     filter: none;
   }
+}
+.frame7-submit {
+  padding: 6px 12px;
 }

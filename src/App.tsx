@@ -161,37 +161,9 @@ function App() {
 
   return (
     <>
-      {/* SVG mask dùng cho hiệu ứng "viết tay" (handwritten reveal) của Frame 2 */}
+      {/* SVG mask dùng cho hiệu ứng "viết tay" (handwritten reveal) của f2_text3 */}
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
         <defs>
-          <mask id="eraserMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
-            {[0.1, 0.3, 0.5, 0.7, 0.9].map((baseline) => {
-              const amplitude = 0.035
-              const steps = 8
-              const points = Array.from({ length: steps + 1 }, (_, i) => {
-                const x = i / steps
-                const y = baseline - amplitude * Math.sin(2 * Math.PI * x)
-                return `${x.toFixed(3)},${y.toFixed(3)}`
-              })
-              const d = `M${points.join(' L')}`
-              return (
-                <path
-                  key={baseline}
-                  d={d}
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth={0.24}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                  strokeDasharray={1}
-                  strokeDashoffset={1}
-                  className={`handwrite-path${showFrame2Extra ? ' handwrite-path-active' : ''}`}
-                />
-              )
-            })}
-          </mask>
-
           <mask id="textLineMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
             {[0.25, 0.75].map((baseline) => {
               const amplitude = 0.04
@@ -229,12 +201,17 @@ function App() {
             <img src={frame1_text} alt="Hero Text" className="hero-text-image " />
             <img src={frame1} alt="Hero" className="hero-image reveal" />
             {/* <button className="RSVP-button">RSVP</button> */}
-            <img src={frame1_btn} alt="RSVP Button" className="RSVP-button reveal" onClick={() => {
-              const frame7Element = document.getElementById('frame7')
-              if (frame7Element) {
-                frame7Element.scrollIntoView({ behavior: 'smooth' })
-              }
-            }} />
+            <img
+              src={frame1_btn}
+              alt="RSVP Button"
+              className="RSVP-button reveal"
+              onClick={() => {
+                window.scrollTo({
+                  top: document.documentElement.scrollHeight,
+                  behavior: 'smooth'
+                })
+              }}
+            />
           </div>
         </div>
       </section>
