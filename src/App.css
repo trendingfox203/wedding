@@ -1,0 +1,893 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* @import url("https://cdn.jsdelivr.net/npm/normalize.css/normalize.css"); */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@font-face {
+  font-family: "FZ Alpha Brights";
+  src: url("../src/assets/fonts/FX-VIP-Alpha-Brights.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../src/assets/fonts/PlayfairDisplay-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+/* ========== ẨN/HIỆN CÁC FRAME TIẾP THEO ========== */
+
+/* Mặc định: ẩn tất cả các frame sau frame 3 */
+.next-frames {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.8s ease,
+    visibility 0.8s ease;
+  /* Không cho phép tương tác khi ẩn */
+  pointer-events: none;
+}
+
+/* Khi hiển thị: mượt mà và cho phép tương tác */
+.next-frames.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Cách khác: dùng display:none (không có animation) */
+.next-frames.hidden {
+  display: none;
+}
+
+.next-frames.visible {
+  display: block;
+}
+
+#center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+#frame1,
+#frame2 {
+  width: 100%;
+}
+
+.hero-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+/* Khung thiết kế cố định 1920x1024 — phóng to để phủ kín viewport (không méo, không lệch) */
+.frame-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: center;
+  transform: translate(-50%, -50%)
+    scale(max(calc(100vw / 1920px), calc(100vh / 1080px)));
+}
+
+/* Frame 3/4 nằm trong frame-canvas của riêng chúng, không cần lặp lại slot 100vh */
+.frame3-frame4-stack .hero-wrapper {
+  height: 100%;
+  min-height: 0;
+}
+
+.hero-text-image {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: left top;
+  color: #ffffff;
+  opacity: 0.48;
+  z-index: 2;
+  pointer-events: none;
+  width: 632px;
+  height: auto;
+  object-fit: contain;
+}
+
+.hero-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.RSVP-button {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 60px;
+  cursor: pointer;
+  z-index: 3;
+}
+
+/* frame 2 styles */
+.f2_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  color: #ded6b5;
+}
+.f2_img1 {
+  position: absolute;
+  top: 44.5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 17%;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+.f2_text1 {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+.f2_text2 {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+.f2_img2 {
+  position: absolute;
+  top: 44.5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18%;
+  height: auto;
+  object-fit: contain;
+}
+.f2_text3 {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+  z-index: 5;
+}
+
+/* ========== HIỆU ỨNG "ERASER REVEAL" (dải tẩy zíc-zắc, dùng SVG mask) ========== */
+.f2_img2,
+.f2_text3 {
+  mask-image: url(#eraserMask);
+  -webkit-mask-image: url(#eraserMask);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  pointer-events: none;
+}
+
+.f2_img2.f2-extra-visible,
+.f2_text3.f2-extra-visible {
+  pointer-events: auto;
+}
+
+.eraser-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.eraser-path.eraser-path-active {
+  animation: eraserWipe 1.3s cubic-bezier(0.55, 0, 0.15, 1) forwards;
+}
+
+@keyframes eraserWipe {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+/* frame 3 styles */
+.frame3-frame4-stack {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.frame3-frame4-stack #frame3,
+.frame3-frame4-stack #frame4 {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#frame3 {
+  z-index: 2;
+  overflow: hidden;
+}
+
+#frame4 {
+  z-index: 1;
+}
+
+.invitation-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(90vw, 760px);
+  aspect-ratio: 3 / 4;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+}
+
+.frame3-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  animation: flashGlow 0.45s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes flashGlow {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+}
+
+.invitation-card.open .card-face {
+  transform: scale(1.01);
+  opacity: 1;
+}
+/* ========== ẨN FRAME 3 (crossfade tại chỗ, không đổi layout) ========== */
+.frame3-section {
+  transition:
+    opacity 0.6s ease,
+    visibility 0.6s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.frame3-section.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* Không cho phép tương tác khi ẩn */
+}
+
+/* ========== ẨN/HIỆN CÁC FRAME TIẾP THEO ========== */
+.next-frames {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.8s ease,
+    visibility 0.8s ease;
+  pointer-events: none;
+}
+
+.next-frames.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ===== FLASH EFFECT ===== */
+.frame3-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 9999;
+  pointer-events: none;
+  animation: flashEffect 1s ease-in-out forwards;
+}
+
+@keyframes flashEffect {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/*frame 4 styles */
+.f4_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #3d2b2c;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 1s ease,
+    transform 1.1s ease;
+}
+
+.f4_img2 {
+  aspect-ratio: auto;
+
+  width: 606px;
+  height: auto;
+  object-fit: cover;
+  position: absolute;
+  bottom: 182px;
+  left: 808px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.9s ease 0.2s,
+    transform 0.9s ease 0.2s;
+}
+
+.frame4-section {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.8s ease,
+    visibility 0.8s ease;
+  pointer-events: none;
+}
+
+.frame4-section.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.frame4-section.visible .f4_background {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.frame4-section.visible .f4_img2 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Frame 5/6/7: nội dung cao hơn 1 màn hình (thiết kế gốc 1920x2160) — cuộn trang bình thường để xem hết, KHÔNG cover/crop như Frame 1-4 */
+.frame5-section,
+.frame6-section,
+.frame7-section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.frame5-section {
+  background: #f5f0eb;
+}
+
+.frame5-section .hero-wrapper,
+.frame6-section .hero-wrapper,
+.frame7-section .hero-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  height: auto;
+  overflow: visible;
+}
+
+.f5_background {
+  width: 100%;
+  height: auto;
+  display: block;
+  background-color: #3d2b2c;
+}
+
+.f5_text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.f6_background {
+  width: 100%;
+  height: auto;
+  display: block;
+  background-color: #b2847b;
+}
+
+.f6_text {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: auto;
+  object-fit: contain;
+}
+
+.f6_img {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+}
+
+.f7_text {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62%;
+  height: auto;
+  object-fit: contain;
+}
+
+.frame7-form {
+  position: absolute;
+  top: 28.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(64%, 90vw);
+  padding: 24px 24px 18px;
+  background: transparent;
+  /* border: 1px solid rgba(255, 255, 255, 0.18); */
+  border-radius: 22px;
+  /* backdrop-filter: blur(12px); */
+  display: grid;
+  gap: 4%;
+  z-index: 3;
+}
+
+.frame7-form label {
+  font-family: "Playfair Display", serif;
+  display: block;
+  font-size: 2.25rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.frame7-form input,
+.frame7-form select,
+.frame7-form textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 16px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 2.25rem;
+}
+
+.frame7-form input:focus,
+.frame7-form input:focus-visible,
+.frame7-form textarea:focus,
+.frame7-form textarea:focus-visible {
+  outline: none;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.frame7-form textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.frame7-form input::placeholder,
+.frame7-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font:
+    100% "Playfair Display",
+    serif;
+}
+
+.radio-group,
+.meal-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.radio-button,
+.meal-button {
+  flex: 1 1 45%;
+  min-width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-family:
+    playfair display,
+    serif;
+  font-size: 1.9rem;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+  text-align: center;
+}
+
+.radio-button.selected,
+.meal-button.selected {
+  background: rgba(255, 255, 255, 0.95);
+  color: #5c3d29;
+  border-color: rgba(255, 255, 255, 1);
+}
+
+.radio-button:hover,
+.meal-button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.meal-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal-fieldset legend {
+  font-size: 1.9rem;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 10px;
+}
+
+.allergy-label {
+  margin-top: 18px;
+}
+
+/* ========== FRAME 7 - FIX SELECT & OPTION ========== */
+
+/* Fix select */
+.frame7-form select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 16px 16px;
+  padding-right: 44px; /* Chừa chỗ cho icon mũi tên */
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  background: transparent;
+  color: #fff;
+  font-size: 2.25rem;
+
+  /* Bỏ style mặc định */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Icon mũi tên */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 22px;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Hover & Focus */
+.frame7-form select:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.frame7-form select:focus {
+  outline: none;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+.frame7-form select:focus-visible {
+  outline: none;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* ===== QUAN TRỌNG: FIX OPTION QUÁ DÀI ===== */
+.frame7-form select option {
+  /* Giới hạn chiều dài option */
+  max-width: 100%;
+
+  /* Cắt text nếu quá dài và thêm dấu ... */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Style option */
+  background: #3d2b2c;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 1.8rem;
+  font-family: "Playfair Display", serif;
+  min-height: 50px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  /* Đảm bảo option vừa với select */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Option được chọn */
+.frame7-form select option:checked {
+  background: #b2847b;
+  color: #fff;
+}
+
+/* Hover cho option (trên một số trình duyệt) */
+.frame7-form select option:hover {
+  background: #b2847b;
+  color: #fff;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .frame7-form select,
+  .frame7-form input,
+  .frame7-form textarea,
+  .radio-button,
+  .meal-button {
+    font-size: 1.6rem;
+  }
+
+  .frame7-form label,
+  .meal-fieldset legend,
+  .frame7-submit {
+    font-size: 1.6rem;
+  }
+
+  .frame7-form {
+    gap: 12%;
+  }
+
+  .frame7-form select {
+    padding: 14px 14px;
+    padding-right: 40px;
+    background-size: 20px;
+  }
+
+  .frame7-form select option {
+    font-size: 1.4rem;
+    padding: 10px 14px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .frame7-form select,
+  .frame7-form input,
+  .frame7-form textarea,
+  .radio-button,
+  .meal-button {
+    font-size: 1.3rem;
+  }
+
+  .frame7-form label,
+  .meal-fieldset legend,
+  .frame7-submit {
+    font-size: 1.3rem;
+  }
+
+  .frame7-form select {
+    padding: 12px 12px;
+    padding-right: 36px;
+    background-size: 18px;
+  }
+
+  .frame7-form select option {
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+}
+
+/* ===== XÓA MŨI TÊN MẶC ĐỊNH TRÊN IE ===== */
+.frame7-form select::-ms-expand {
+  display: none;
+}
+.frame7-submit {
+  font-family: "Playfair Display", serif;
+  width: 100%;
+  padding: 20px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #fef7e9;
+  color: #5c3d29;
+  font-size: 2.25rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.f7_background {
+  width: 100%;
+  height: auto;
+  display: block;
+  background-color: #b2847b;
+}
+.f7_img {
+  position: absolute;
+  bottom: 193px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 90vw);
+  height: auto;
+  object-fit: contain;
+  opacity: 0.9;
+  background-color: #b2847b;
+}
+@media (max-width: 600px) {
+  .invitation-card {
+    width: min(94vw, 520px);
+  }
+
+  .card-hint {
+    bottom: 14px;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+}
+.meal-fieldset {
+  font-family: "Playfair Display", serif;
+}
+.meal-fieldset legend {
+  font-family: "Playfair Display", serif;
+  font-size: 2.25rem;
+}
+
+.frame7-form select:focus {
+  /* outline: none; */
+  border: 1px solid #fff;
+}
+
+/* ========== HIỆU ỨNG FADE-IN KHI CUỘN TỚI ========== */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.9s ease,
+    filter 0.9s ease;
+  filter: blur(4px);
+}
+
+.reveal.reveal-visible {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* ========== RESPONSIVE CHO ĐIỆN THOẠI (chỉ thêm, không sửa rule gốc) ========== */
+@media (max-width: 768px) {
+  /* f5_text/f6_text đang là px cố định (600px/480px) - trên màn hình hẹp
+     sẽ tràn ra ngoài canvas, thu nhỏ lại theo tỉ lệ màn hình */
+  .f5_text {
+    width: 80vw;
+  }
+
+  .f6_text {
+    width: 70vw;
+  }
+
+  /* Nền Frame 5/6/7 (width:100%, height theo tỉ lệ ảnh riêng ~1.125) trên màn hình
+     hẹp bị THẤP HƠN nhiều so với ảnh/chữ overlay cao (đặc biệt f5_text ~2 lần rộng),
+     để lộ khoảng trống màu nền phẳng phía dưới thay vì hoạ tiết. Cho khung cao hơn
+     và nền che phủ (cover) trọn khung đó thay vì chỉ scale theo tỉ lệ ảnh gốc. */
+  .frame5-section .hero-wrapper,
+  .frame6-section .hero-wrapper,
+  .frame7-section .hero-wrapper {
+    min-height: 180vw;
+  }
+
+  .f5_background,
+  .f6_background,
+  .f7_background {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Frame 1 dùng chung .reveal (IntersectionObserver, cần >=30% diện tích
+     phần tử lọt vào khung nhìn mới kích hoạt). Ảnh nền full-bleed của Frame 1
+     bị canvas 1920x1080 crop ngang rất mạnh trên màn hình dọc hẹp, nên diện tích
+     hiển thị thực tế có thể xuống dưới ngưỡng đó và không bao giờ kích hoạt được
+     (ảnh nền kẹt ở trạng thái ẩn). Ép hiện luôn trên mobile để tránh màn hình trắng. */
+  .hero-text-image.reveal,
+  .hero-image.reveal,
+  .RSVP-button.reveal {
+    opacity: 1;
+    filter: none;
+  }
+}
