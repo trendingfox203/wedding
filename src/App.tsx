@@ -244,11 +244,13 @@ function App() {
               src={frame2_img2}
               alt="Hero"
               className={`f2_img2 ${showFrame2Extra ? 'f2-extra-visible' : ''}`}
+              loading="lazy"
             />
             <img
               src={frame2_text3}
               alt="Hero Text"
               className={`f2_text3 ${showFrame2Extra ? 'f2-extra-visible' : ''}`}
+              loading="lazy"
             />
           </div>
         </div>
@@ -281,7 +283,7 @@ function App() {
                   className="card-face"
                   muted
                   playsInline
-                  preload="auto"
+                  preload="metadata"
                 />
                 {showFlash && <div className="frame3-flash" />}
               </div>
@@ -294,8 +296,8 @@ function App() {
             className={`frame4-section ${showNextFrames ? 'visible' : ''}`}
           >
             <div className="hero-wrapper">
-              <img src={frame4} alt="Hero" className="f4_background" />
-              <img src={frame4_img2} alt="Hero" className="f4_img2" />
+              <img src={frame4} alt="Hero" className="f4_background" loading="lazy" />
+              <img src={frame4_img2} alt="Hero" className="f4_img2" loading="lazy" />
             </div>
           </section>
         </div>
@@ -305,23 +307,23 @@ function App() {
       <div className={`next-frames ${showNextFrames ? 'visible' : 'hidden'}`}>
         <section id="frame5" className="frame5-section">
           <div className="hero-wrapper">
-            <img src={frame5} alt="Background" className="f5_background" />
-            <img src={frame5_text} alt="Hero Text" className="f5_text reveal" />
+            <img src={frame5} alt="Background" className="f5_background" loading="lazy" />
+            <img src={frame5_text} alt="Hero Text" className="f5_text reveal" loading="lazy" />
           </div>
         </section>
 
         <section id="frame6" className="frame6-section">
           <div className="hero-wrapper">
-            <img src={frame6} alt="Hero" className="f6_background" />
-            <img src={frame6_text} alt="Hero Text" className="f6_text reveal" />
-            <img src={frame6_img} alt="Hero Image" className="f6_img reveal" />
+            <img src={frame6} alt="Hero" className="f6_background" loading="lazy" />
+            <img src={frame6_text} alt="Hero Text" className="f6_text reveal" loading="lazy" />
+            <img src={frame6_img} alt="Hero Image" className="f6_img reveal" loading="lazy" />
           </div>
         </section>
 
         <section id="frame7" className="frame7-section">
           <div className="hero-wrapper">
-            <img src={frame7} alt="Hero" className="f7_background" />
-            <img src={frame7_text} alt="Hero Text" className="f7_text reveal" />
+            <img src={frame7} alt="Hero" className="f7_background" loading="lazy" />
+            <img src={frame7_text} alt="Hero Text" className="f7_text reveal" loading="lazy" />
             <div className="frame7-form reveal">
               <label>
                 Họ và Tên
