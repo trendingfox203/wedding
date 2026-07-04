@@ -2,24 +2,24 @@ import { useEffect, useRef, useState } from 'react'
 import frame1 from './assets/Frame1.png'
 import frame1_text from './assets/Frame1_text.png'
 import frame1_btn from './assets/Frame1_btn.png'
-import frame2 from './assets/Frame2.png'
-import frame2_img1 from './assets/Frame2_img1.png'
-import frame2_text1 from './assets/Frame2_text1.png'
-import frame2_text2 from './assets/Frame2_text2.png'
-import frame2_img2 from './assets/Frame2_img2.png'
-import frame2_text3 from './assets/Frame2_text3.png'
+import frame2 from './assets/frame2.png'
+import frame2_img1 from './assets/frame2_img1.png'
+import frame2_text1 from './assets/frame2_text1.png'
+import frame2_text2 from './assets/frame2_text2.png'
+import frame2_img2 from './assets/frame2_img2.png'
+import frame2_text3 from './assets/frame2_text3.png'
 // import frame3 from './assets/Frame3.png'
 import frame3_video from './assets/frame3_vid.mp4'
-import frame4 from './assets/Frame4.png'
+import frame4 from './assets/frame4.png'
 // import frame4_img1 from './assets/Frame4_img1.png'
-import frame4_img2 from './assets/Frame4_img2.png'
-import frame5 from './assets/Frame5.png'
-import frame5_text from './assets/Frame5_text.png'
-import frame6 from './assets/Frame6.png'
-import frame6_text from './assets/Frame6_text.png'
-import frame6_img from './assets/Frame6_img.png'
-import frame7 from './assets/Frame7.png'
-import frame7_text from './assets/Frame7_text.png'
+import frame4_img2 from './assets/frame4_img2.png'
+import frame5 from './assets/frame5.png'
+import frame5_text from './assets/frame5_text.png'
+import frame6 from './assets/frame6.png'
+import frame6_text from './assets/frame6_text.png'
+import frame6_img from './assets/frame6_img.png'
+import frame7 from './assets/frame7.png'
+import frame7_text from './assets/frame7_text.png'
 // import frame7_img from './assets/Frame7_img.png'
 import './App.css'
 
@@ -103,7 +103,7 @@ function App() {
           }
         })
       },
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     )
 
     revealElements.forEach((el) => observer.observe(el))
@@ -152,7 +152,7 @@ function App() {
       <section id="frame1">
         <div className="hero-wrapper">
           <div className="frame-canvas">
-            <img src={frame1_text} alt="Hero Text" className="hero-text-image reveal" />
+            <img src={frame1_text} alt="Hero Text" className="hero-text-image " />
             <img src={frame1} alt="Hero" className="hero-image reveal" />
             {/* <button className="RSVP-button">RSVP</button> */}
             <img src={frame1_btn} alt="RSVP Button" className="RSVP-button reveal" onClick={() => {
