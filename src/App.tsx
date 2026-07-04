@@ -8,7 +8,7 @@ import frame2_text1 from './assets/frame2_text1.png'
 import frame2_text2 from './assets/frame2_text2.png'
 import frame2_img2 from './assets/frame2_img2.png'
 import frame2_text3 from './assets/frame2_text3.png'
-// import frame3 from './assets/Frame3.png'
+import frame3_poster from './assets/frame3.png'
 import frame3_video from './assets/frame3_vid.mp4'
 import frame4 from './assets/frame4.png'
 // import frame4_img1 from './assets/Frame4_img1.png'
@@ -48,16 +48,13 @@ function App() {
   // Ref để lưu timeout
   const flashTimeoutRef = useRef<number | null>(null)
   const transitionTimeoutRef = useRef<number | null>(null)
-
-
+  const videoFallbackTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!videoRef.current) return
+    const video = videoRef.current
+    if (!video) return
 
-    if (isOpen) {
-      videoRef.current.currentTime = 0
-      videoRef.current.play().catch(() => undefined)
-
+    const startFlashSequence = () => {
       flashTimeoutRef.current = setTimeout(() => {
         setShowFlash(true)
 
@@ -67,10 +64,34 @@ function App() {
           setShowNextFrames(true)
         }, 100)
       }, 1300)
+    }
+
+    // Chỉ bắt đầu đếm giờ flash khi video THỰC SỰ đã bắt đầu phát (sự kiện 'playing'),
+    // thay vì đếm mù ngay từ lúc bấm - tránh trường hợp mạng chậm, video chưa kịp
+    // phát mà Frame 3 đã tự động biến mất.
+    const handlePlaying = () => {
+      if (videoFallbackTimeoutRef.current) {
+        clearTimeout(videoFallbackTimeoutRef.current)
+        videoFallbackTimeoutRef.current = null
+      }
+      startFlashSequence()
+    }
+
+    if (isOpen) {
+      video.currentTime = 0
+      video.addEventListener('playing', handlePlaying)
+      video.play().catch(() => undefined)
+
+      // Mạng quá chậm, video không phát được trong 4s - vẫn tiếp tục để không bị kẹt mãi
+      videoFallbackTimeoutRef.current = setTimeout(() => {
+        video.removeEventListener('playing', handlePlaying)
+        startFlashSequence()
+      }, 4000)
 
     } else {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
+      video.pause()
+      video.currentTime = 0
+      video.removeEventListener('playing', handlePlaying)
 
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
@@ -79,6 +100,10 @@ function App() {
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current)
         transitionTimeoutRef.current = null
+      }
+      if (videoFallbackTimeoutRef.current) {
+        clearTimeout(videoFallbackTimeoutRef.current)
+        videoFallbackTimeoutRef.current = null
       }
 
       // ✅ Fix lỗi ESLint: bọc trong setTimeout
@@ -88,6 +113,7 @@ function App() {
     }
 
     return () => {
+      video.removeEventListener('playing', handlePlaying)
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
         flashTimeoutRef.current = null
@@ -95,6 +121,10 @@ function App() {
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current)
         transitionTimeoutRef.current = null
+      }
+      if (videoFallbackTimeoutRef.current) {
+        clearTimeout(videoFallbackTimeoutRef.current)
+        videoFallbackTimeoutRef.current = null
       }
     }
   }, [isOpen])
@@ -163,39 +193,6 @@ function App() {
 
   return (
     <>
-      {/* SVG mask dùng cho hiệu ứng "viết tay" (handwritten reveal) của f2_text3 */}
-      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
-        <defs>
-          <mask id="textLineMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
-            {[0.25, 0.75].map((baseline) => {
-              const amplitude = 0.04
-              const steps = 8
-              const points = Array.from({ length: steps + 1 }, (_, i) => {
-                const x = i / steps
-                const y = baseline - amplitude * Math.sin(2 * Math.PI * x)
-                return `${x.toFixed(3)},${y.toFixed(3)}`
-              })
-              const d = `M${points.join(' L')}`
-              return (
-                <path
-                  key={baseline}
-                  d={d}
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth={0.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  pathLength={1}
-                  strokeDasharray={1}
-                  strokeDashoffset={1}
-                  className={`text-line-path${showFrame2Extra ? ' text-line-path-active' : ''}`}
-                />
-              )
-            })}
-          </mask>
-        </defs>
-      </svg>
-
       {/* Frame 1 & 2 luôn hiển thị */}
       <section id="frame1">
         <div className="hero-wrapper">
@@ -280,10 +277,11 @@ function App() {
                 <video
                   ref={videoRef}
                   src={frame3_video}
+                  poster={frame3_poster}
                   className="card-face"
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                 />
                 {showFlash && <div className="frame3-flash" />}
               </div>

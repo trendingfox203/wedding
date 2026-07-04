@@ -227,14 +227,11 @@ input[type="number"]::-webkit-inner-spin-button {
   transform: translate(-50%, -50%) translateY(0);
 }
 
-/* f2_text3 có đúng 2 dòng chữ - dùng mask riêng 2 nét, viết chậm từng dòng như đang viết tay */
+/* f2_text3 có đúng 2 dòng chữ - viết chậm từng dòng như đang viết tay.
+   Dùng clip-path thuần CSS (không phụ thuộc SVG mask) vì mask-image: url(#id)
+   tham chiếu SVG không chạy ổn định trên nhiều trình duyệt mobile (đặc biệt Safari/iOS). */
 .f2_text3 {
-  mask-image: url(#textLineMask);
-  -webkit-mask-image: url(#textLineMask);
-  mask-repeat: no-repeat;
-  -webkit-mask-repeat: no-repeat;
-  mask-size: 100% 100%;
-  -webkit-mask-size: 100% 100%;
+  clip-path: inset(0 0 100% 0);
   pointer-events: none;
 }
 
@@ -243,28 +240,23 @@ input[type="number"]::-webkit-inner-spin-button {
   pointer-events: auto;
 }
 
-@keyframes eraserWipe {
-  to {
-    stroke-dashoffset: 0;
+.f2_text3.f2-extra-visible {
+  animation: textLineReveal 3s ease-in-out forwards;
+}
+
+@keyframes textLineReveal {
+  0% {
+    clip-path: inset(0 0 100% 0);
   }
-}
-
-/* f2_text3: viết từng dòng chậm rãi, dòng 2 chỉ bắt đầu khi dòng 1 viết xong */
-.text-line-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-
-.text-line-path.text-line-path-active {
-  animation: eraserWipe 1s ease-in-out forwards;
-}
-
-.text-line-path.text-line-path-active:nth-of-type(1) {
-  animation-delay: 0.1s;
-}
-.text-line-path.text-line-path-active:nth-of-type(2) {
-  animation-delay: 0.5s;
-  animation-duration: 4s;
+  20% {
+    clip-path: inset(0 0 50% 0);
+  }
+  33% {
+    clip-path: inset(0 0 50% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0% 0);
+  }
 }
 /* frame 3 styles */
 .frame3-frame4-stack {
