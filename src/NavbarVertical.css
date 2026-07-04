@@ -1,0 +1,189 @@
+/* src/NavbarVertical.css */
+
+/* ========== NAVBAR DỌC BÊN PHẢI ========== */
+.navbar-vertical {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  user-select: none;
+  overscroll-behavior: contain;
+  touch-action: none;
+  width: 240px;
+  height: 320px; /* Giới hạn chiều cao để tạo hiệu ứng slot */
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+.navbar-vertical.hidden {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.95);
+  pointer-events: none;
+}
+.navbar-vertical-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  will-change: transform;
+}
+
+.navbar-vertical-menu li {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 40px; /* Chiều cao cố định mỗi item */
+}
+
+/* ===== NAV LINK (giữ nguyên style cũ) ===== */
+.nav-vertical-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  font-family: "Playfair Display", serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: #fffeec;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+
+/* Mờ dần ở hai đầu - giữ nguyên */
+.nav-vertical-label {
+  display: inline-block;
+  position: relative;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 20%,
+    #000 80%,
+    transparent 100%
+  );
+}
+
+.nav-vertical-link.active .nav-vertical-label {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+/* ===== BORDER TOP & BOTTOM KHI ACTIVE (giữ nguyên) ===== */
+.nav-vertical-link.active::before,
+.nav-vertical-link.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: #fffeec;
+  border-radius: 2px;
+  animation: borderFade 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.nav-vertical-link.active::before {
+  top: 0;
+}
+
+.nav-vertical-link.active::after {
+  bottom: 0;
+}
+
+@keyframes borderFade {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 60%;
+    opacity: 1;
+  }
+}
+
+/* ===== INDICATOR ===== */
+.nav-vertical-indicator {
+  display: none;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .navbar-vertical {
+    right: 12px;
+    width: 100px;
+    height: 260px;
+  }
+
+  .navbar-vertical-menu li {
+    height: 46px;
+  }
+
+  .nav-vertical-link {
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    padding: 6px 12px;
+  }
+
+  .nav-vertical-link.active::before,
+  .nav-vertical-link.active::after {
+    width: 50%;
+    height: 1.2px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-vertical {
+    right: 8px;
+    width: 80px;
+    height: 200px;
+    padding: 12px 0;
+  }
+
+  .navbar-vertical-menu li {
+    height: 36px;
+  }
+
+  .nav-vertical-link {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+  }
+
+  .nav-vertical-link.active::before,
+  .nav-vertical-link.active::after {
+    width: 40%;
+    height: 1px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-vertical {
+    display: none;
+  }
+}

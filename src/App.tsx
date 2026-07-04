@@ -20,7 +20,7 @@ import frame6_text from './assets/frame6_text.png'
 import frame6_img from './assets/frame6_img.png'
 import frame7 from './assets/frame7.png'
 import frame7_text from './assets/frame7_text.png'
-// import frame7_img from './assets/Frame7_img.png'
+import NavbarVertical from './NavbarVertical'// import frame7_img from './assets/Frame7_img.png'
 import './App.css'
 
 function App() {
@@ -48,6 +48,8 @@ function App() {
   // Ref để lưu timeout
   const flashTimeoutRef = useRef<number | null>(null)
   const transitionTimeoutRef = useRef<number | null>(null)
+
+
 
   useEffect(() => {
     if (!videoRef.current) return
@@ -213,6 +215,8 @@ function App() {
               }}
             />
           </div>
+          <NavbarVertical />
+
         </div>
       </section>
 
