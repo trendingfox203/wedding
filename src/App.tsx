@@ -42,6 +42,8 @@ function App() {
     'https://script.google.com/macros/s/AKfycbzzQz5A3X72vMK7_bxkrn0G58tOSKxE5h2DXPSu7hL9n74K9Yugw_3fubnMaRbysEqo/exec'
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const rafRef = useRef<number | null>(null)
   const frame3Ref = useRef<HTMLElement | null>(null)
   const frame4Ref = useRef<HTMLElement | null>(null)
 
@@ -50,9 +52,66 @@ function App() {
   const transitionTimeoutRef = useRef<number | null>(null)
   const videoFallbackTimeoutRef = useRef<number | null>(null)
 
+  // Vẽ 1 nguồn ảnh/video lên canvas theo kiểu "cover" (giống object-fit: cover)
+  const drawCover = (
+    ctx: CanvasRenderingContext2D,
+    source: CanvasImageSource,
+    sourceWidth: number,
+    sourceHeight: number,
+    canvas: HTMLCanvasElement
+  ) => {
+    if (!sourceWidth || !sourceHeight) return
+    const canvasRatio = canvas.width / canvas.height
+    const sourceRatio = sourceWidth / sourceHeight
+    let sx = 0
+    let sy = 0
+    let sw = sourceWidth
+    let sh = sourceHeight
+    if (sourceRatio > canvasRatio) {
+      sw = sourceHeight * canvasRatio
+      sx = (sourceWidth - sw) / 2
+    } else {
+      sh = sourceWidth / canvasRatio
+      sy = (sourceHeight - sh) / 2
+    }
+    ctx.drawImage(source, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
+  }
+
+  const resizeCanvasToDisplaySize = (canvas: HTMLCanvasElement) => {
+    const dpr = window.devicePixelRatio || 1
+    const rect = canvas.getBoundingClientRect()
+    const width = Math.max(1, Math.round(rect.width * dpr))
+    const height = Math.max(1, Math.round(rect.height * dpr))
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width
+      canvas.height = height
+    }
+  }
+
+  // Zalo (và một số webview khác) tự chiếm quyền phát <video> sang trình xem native
+  // ngay khi phát hiện tương tác, bất kể playsinline. Cách an toàn là KHÔNG hiển thị
+  // thẻ <video> trực tiếp - thay vào đó vẽ từng khung hình của nó lên <canvas> (ảnh
+  // thuần, webview không thể "bắt" để chuyển chế độ xem video).
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas || isOpen) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const img = new Image()
+    img.src = frame3_poster
+    img.onload = () => {
+      resizeCanvasToDisplaySize(canvas)
+      drawCover(ctx, img, img.naturalWidth, img.naturalHeight, canvas)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    const canvas = canvasRef.current
+    if (!video || !canvas) return
+    const ctx = canvas.getContext('2d')
 
     const startFlashSequence = () => {
       flashTimeoutRef.current = setTimeout(() => {
@@ -66,6 +125,14 @@ function App() {
       }, 1300)
     }
 
+    const drawFrame = () => {
+      if (ctx) {
+        resizeCanvasToDisplaySize(canvas)
+        drawCover(ctx, video, video.videoWidth, video.videoHeight, canvas)
+      }
+      rafRef.current = requestAnimationFrame(drawFrame)
+    }
+
     // Chỉ bắt đầu đếm giờ flash khi video THỰC SỰ đã bắt đầu phát (sự kiện 'playing'),
     // thay vì đếm mù ngay từ lúc bấm - tránh trường hợp mạng chậm, video chưa kịp
     // phát mà Frame 3 đã tự động biến mất.
@@ -73,6 +140,9 @@ function App() {
       if (videoFallbackTimeoutRef.current) {
         clearTimeout(videoFallbackTimeoutRef.current)
         videoFallbackTimeoutRef.current = null
+      }
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(drawFrame)
       }
       startFlashSequence()
     }
@@ -93,6 +163,10 @@ function App() {
       video.currentTime = 0
       video.removeEventListener('playing', handlePlaying)
 
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
         flashTimeoutRef.current = null
@@ -114,6 +188,10 @@ function App() {
 
     return () => {
       video.removeEventListener('playing', handlePlaying)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
       if (flashTimeoutRef.current) {
         clearTimeout(flashTimeoutRef.current)
         flashTimeoutRef.current = null
@@ -274,11 +352,12 @@ function App() {
                   }
                 }}
               >
+                {/* Video ẩn - chỉ dùng làm nguồn khung hình để vẽ lên canvas bên dưới,
+                    tránh Zalo/webview "bắt" thẻ video để mở trình xem native */}
                 <video
                   ref={videoRef}
                   src={frame3_video}
-                  poster={frame3_poster}
-                  className="card-face"
+                  className="card-face-source"
                   muted
                   playsInline
                   webkit-playsinline="true"
@@ -286,7 +365,10 @@ function App() {
                   disableRemotePlayback
                   controls={false}
                   preload="auto"
+                  aria-hidden="true"
+                  tabIndex={-1}
                 />
+                <canvas ref={canvasRef} className="card-face" aria-hidden="true" />
                 {showFlash && <div className="frame3-flash" />}
               </div>
             </div>

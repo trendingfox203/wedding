@@ -209,22 +209,19 @@ input[type="number"]::-webkit-inner-spin-button {
   z-index: 5;
 }
 
-/* ========== HIỆU ỨNG "DISSOLVE + FADE DOWN" cho f2_img2 ========== */
+/* ========== HIỆU ỨNG "DISSOLVE" (mờ dần xuất hiện) cho f2_img2 ========== */
 .f2_img2 {
   opacity: 0;
   filter: blur(6px);
-  transform: translate(-50%, -50%) translateY(-12px);
   transition:
     opacity 1s ease,
-    filter 1s ease,
-    transform 1s ease;
+    filter 1s ease;
   pointer-events: none;
 }
 
 .f2_img2.f2-extra-visible {
   opacity: 1;
   filter: blur(0);
-  transform: translate(-50%, -50%) translateY(0);
 }
 
 /* f2_text3 có đúng 2 dòng chữ - viết chậm từng dòng như đang viết tay.
@@ -332,6 +329,17 @@ input[type="number"]::-webkit-inner-spin-button {
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.45s ease;
+}
+
+/* Video nguồn - giữ đúng kích thước để giải mã khung hình bình thường,
+   nhưng ẩn khỏi mắt và không nhận thao tác (canvas ở trên mới là thứ hiển thị) */
+.card-face-source {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .invitation-card.open .card-face {
