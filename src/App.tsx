@@ -281,6 +281,10 @@ function App() {
                   className="card-face"
                   muted
                   playsInline
+                  webkit-playsinline="true"
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  controls={false}
                   preload="auto"
                 />
                 {showFlash && <div className="frame3-flash" />}
