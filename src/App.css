@@ -959,7 +959,10 @@ input[type="number"]::-webkit-inner-spin-button {
     transform: none;
     width: min(64%, 90vw);
     margin: 0 auto 48px;
-    gap: 4%;
+    /* gap theo % phụ thuộc ngược vào chiều cao auto của grid (vòng lặp phụ thuộc),
+       khiến trình duyệt tính thiếu khoảng trống thật - dòng thông báo cuối bị tràn
+       ra ngoài khung. Dùng đơn vị cố định để tránh vòng lặp này. */
+    gap: 24px;
   }
 
   .f5_background,
@@ -985,4 +988,32 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .frame7-submit {
   padding: 6px 12px;
+}
+.hero-text-image {
+  width: 25%;
+  opacity: 0.68;
+}
+.f2_text3 {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: auto;
+  object-fit: contain;
+  z-index: 5;
+}
+.f4_img2 {
+  aspect-ratio: auto;
+  width: 530px;
+  height: auto;
+  object-fit: cover;
+  position: absolute;
+  bottom: 184px;
+  left: 800px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.9s ease 0.2s,
+    transform 0.9s ease 0.2s;
 }
