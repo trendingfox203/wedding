@@ -29,11 +29,17 @@ function App() {
   const [hideFrame3, setHideFrame3] = useState(false)
   const [showFlash, setShowFlash] = useState(false)
   const [showFrame2Extra, setShowFrame2Extra] = useState(false)
+  const [name, setName] = useState('')
   const [attend, setAttend] = useState('')
   const [guests, setGuests] = useState('')
   const [wish, setWish] = useState('')
   const [mealChoice, setMealChoice] = useState('normal')
   const [allergyDetails, setAllergyDetails] = useState('')
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [submitMessage, setSubmitMessage] = useState('')
+
+  const GOOGLE_SCRIPT_URL =
+    'https://script.google.com/macros/s/AKfycbzzQz5A3X72vMK7_bxkrn0G58tOSKxE5h2DXPSu7hL9n74K9Yugw_3fubnMaRbysEqo/exec'
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const frame3Ref = useRef<HTMLElement | null>(null)
@@ -128,22 +134,90 @@ function App() {
     }
   }
 
+  const handleSubmit = async () => {
+    if (!name.trim() || !attend) {
+      setSubmitStatus('error')
+      setSubmitMessage('Vui lòng nhập họ tên và chọn có tham dự hay không.')
+      return
+    }
+
+    setSubmitStatus('submitting')
+    setSubmitMessage('')
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ name, attend, guests, wish, mealChoice, allergyDetails }),
+      })
+      setSubmitStatus('success')
+      setSubmitMessage('Đã gửi xác nhận thành công! Cảm ơn bạn.')
+    } catch {
+      setSubmitStatus('error')
+      setSubmitMessage('Gửi thất bại, vui lòng kiểm tra kết nối và thử lại.')
+    }
+  }
+
   return (
     <>
-      {/* SVG mask dùng cho hiệu ứng "tẩy" (eraser reveal) của Frame 2 */}
+      {/* SVG mask dùng cho hiệu ứng "viết tay" (handwritten reveal) của Frame 2 */}
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
         <defs>
           <mask id="eraserMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
-            <path
-              d="M0,0.06 L1,0.06 L1,0.27 L0,0.27 L0,0.48 L1,0.48 L1,0.69 L0,0.69 L0,0.9 L1,0.9 L1,1.05"
-              fill="none"
-              stroke="#fff"
-              strokeWidth={0.26}
-              strokeLinecap="square"
-              strokeLinejoin="round"
-              pathLength={1}
-              className={`eraser-path${showFrame2Extra ? ' eraser-path-active' : ''}`}
-            />
+            {[0.1, 0.3, 0.5, 0.7, 0.9].map((baseline) => {
+              const amplitude = 0.035
+              const steps = 8
+              const points = Array.from({ length: steps + 1 }, (_, i) => {
+                const x = i / steps
+                const y = baseline - amplitude * Math.sin(2 * Math.PI * x)
+                return `${x.toFixed(3)},${y.toFixed(3)}`
+              })
+              const d = `M${points.join(' L')}`
+              return (
+                <path
+                  key={baseline}
+                  d={d}
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth={0.24}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength={1}
+                  strokeDasharray={1}
+                  strokeDashoffset={1}
+                  className={`handwrite-path${showFrame2Extra ? ' handwrite-path-active' : ''}`}
+                />
+              )
+            })}
+          </mask>
+
+          <mask id="textLineMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+            {[0.25, 0.75].map((baseline) => {
+              const amplitude = 0.04
+              const steps = 8
+              const points = Array.from({ length: steps + 1 }, (_, i) => {
+                const x = i / steps
+                const y = baseline - amplitude * Math.sin(2 * Math.PI * x)
+                return `${x.toFixed(3)},${y.toFixed(3)}`
+              })
+              const d = `M${points.join(' L')}`
+              return (
+                <path
+                  key={baseline}
+                  d={d}
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth={0.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength={1}
+                  strokeDasharray={1}
+                  strokeDashoffset={1}
+                  className={`text-line-path${showFrame2Extra ? ' text-line-path-active' : ''}`}
+                />
+              )
+            })}
           </mask>
         </defs>
       </svg>
@@ -270,7 +344,13 @@ function App() {
             <div className="frame7-form reveal">
               <label>
                 Họ và Tên
-                <input type="text" name="name" placeholder="Nhập họ và tên" />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nhập họ và tên"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </label>
 
               <label>
@@ -360,7 +440,18 @@ function App() {
                 </fieldset>
               )}
 
-              <button type="button" className="frame7-submit">Xác nhận</button>
+              <button
+                type="button"
+                className="frame7-submit"
+                onClick={handleSubmit}
+                disabled={submitStatus === 'submitting'}
+              >
+                {submitStatus === 'submitting' ? 'Đang gửi...' : 'Xác nhận'}
+              </button>
+
+              {submitMessage && (
+                <p className={`frame7-submit-message ${submitStatus}`}>{submitMessage}</p>
+              )}
             </div>
           </div>
         </section>

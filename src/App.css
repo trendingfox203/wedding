@@ -209,11 +209,21 @@ input[type="number"]::-webkit-inner-spin-button {
   z-index: 5;
 }
 
-/* ========== HIỆU ỨNG "ERASER REVEAL" (dải tẩy zíc-zắc, dùng SVG mask) ========== */
-.f2_img2,
-.f2_text3 {
+/* ========== HIỆU ỨNG "VIẾT TAY" (từng dòng tự vẽ trái→phải, dùng SVG mask) ========== */
+.f2_img2 {
   mask-image: url(#eraserMask);
   -webkit-mask-image: url(#eraserMask);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  pointer-events: none;
+}
+
+/* f2_text3 có đúng 2 dòng chữ - dùng mask riêng 2 nét, viết chậm từng dòng như đang viết tay */
+.f2_text3 {
+  mask-image: url(#textLineMask);
+  -webkit-mask-image: url(#textLineMask);
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
   mask-size: 100% 100%;
@@ -226,19 +236,53 @@ input[type="number"]::-webkit-inner-spin-button {
   pointer-events: auto;
 }
 
-.eraser-path {
+.handwrite-path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
 
-.eraser-path.eraser-path-active {
-  animation: eraserWipe 1.3s cubic-bezier(0.55, 0, 0.15, 1) forwards;
+.handwrite-path.handwrite-path-active {
+  animation: eraserWipe 0.75s ease-in-out forwards;
+}
+
+.handwrite-path.handwrite-path-active:nth-of-type(1) {
+  animation-delay: 0s;
+}
+.handwrite-path.handwrite-path-active:nth-of-type(2) {
+  animation-delay: 0.22s;
+}
+.handwrite-path.handwrite-path-active:nth-of-type(3) {
+  animation-delay: 0.44s;
+}
+.handwrite-path.handwrite-path-active:nth-of-type(4) {
+  animation-delay: 0.66s;
+}
+.handwrite-path.handwrite-path-active:nth-of-type(5) {
+  animation-delay: 0.88s;
 }
 
 @keyframes eraserWipe {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+/* f2_text3: viết từng dòng chậm rãi, dòng 2 chỉ bắt đầu khi dòng 1 viết xong */
+.text-line-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.text-line-path.text-line-path-active {
+  animation: eraserWipe 1.3s ease-in-out forwards;
+}
+
+.text-line-path.text-line-path-active:nth-of-type(1) {
+  animation-delay: 0.1s;
+}
+.text-line-path.text-line-path-active:nth-of-type(2) {
+  animation-delay: 1s;
+  animation-duration: 4s;
 }
 /* frame 3 styles */
 .frame3-frame4-stack {
@@ -791,6 +835,26 @@ input[type="number"]::-webkit-inner-spin-button {
   font-size: 2.25rem;
   font-weight: 400;
   cursor: pointer;
+}
+
+.frame7-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.frame7-submit-message {
+  margin-top: 10px;
+  text-align: center;
+  font-family: "Playfair Display", serif;
+  font-size: 1.6rem;
+}
+
+.frame7-submit-message.success {
+  color: #cdeccd;
+}
+
+.frame7-submit-message.error {
+  color: #ffb4b4;
 }
 
 .f7_background {
