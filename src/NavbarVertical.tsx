@@ -73,10 +73,9 @@ const NavbarVertical = () => {
     }, [])
 
     return (
-        <nav className="navbar-vertical">
+        <nav className="navbar-vertical" onWheel={handleWheel}>
             <ul
                 className="navbar-vertical-menu"
-                onWheel={handleWheel}
                 style={{
                     transform: `translateY(${-scrollOffset}px)`,
                     transition: isSpinning
