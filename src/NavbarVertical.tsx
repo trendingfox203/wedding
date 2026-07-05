@@ -30,7 +30,7 @@ const NavbarVertical = () => {
     }, [isSpinning])
 
     const menuItems = [
-        { id: 'about', label: 'VỀ CẶP ĐÔI', section: 'frame1' },
+        { id: 'about', label: 'VỀ CẶP ĐÔI', section: 'frame2' },
         { id: 'location', label: 'ĐỊA ĐIỂM', section: 'frame4' },
         { id: 'schedule', label: 'THỜI GIAN CHI TIẾT', section: 'frame5' },
         { id: 'dresscode', label: 'TRANG PHỤC', section: 'frame6' },
@@ -94,13 +94,21 @@ const NavbarVertical = () => {
 
             for (let i = menuItems.length - 1; i >= 0; i--) {
                 const section = document.getElementById(menuItems[i].section)
-                if (section && section.offsetTop <= scrollPosition) {
+                // Dùng getBoundingClientRect() + scrollY thay vì offsetTop: một số section
+                // (frame4) là position:absolute lồng trong khối đã transform, nên offsetTop
+                // của nó tính theo phần tử cha định vị gần nhất (~0) chứ không phải vị trí
+                // thật trên trang, khiến mục active bị đồng bộ sai khi cuộn.
+                const sectionTop = section ? section.getBoundingClientRect().top + window.scrollY : null
+                if (sectionTop !== null && sectionTop <= scrollPosition) {
                     foundIndex = i
                     break
                 }
             }
 
-            if (foundIndex !== activeIndex) setActiveIndex(foundIndex)
+            if (foundIndex !== activeIndex) {
+                setActiveIndex(foundIndex)
+                setScrollOffset((foundIndex - CENTER_INDEX) * itemHeight)
+            }
         }
 
         window.addEventListener('scroll', handleScroll)
