@@ -7,6 +7,12 @@ const NavbarVertical = () => {
     const [isSpinning, setIsSpinning] = useState(false)
     const [scrollOffset, setScrollOffset] = useState(0)
     const scrollTimeoutRef = useRef<number | null>(null)
+    // Trackpad Mac bắn ra hàng loạt sự kiện wheel nhỏ liên tục (kèm hiệu ứng "trớn"
+    // momentum kéo dài cả sau khi nhấc tay), khác hẳn chuột Windows (mỗi nấc 1 sự
+    // kiện lớn, rời rạc). Cộng dồn deltaY và chỉ chuyển mục khi vượt ngưỡng để 2 nền
+    // tảng cư xử giống nhau, tránh nhảy lung tung/lọt cuộn ở gần biên trên Mac.
+    const wheelAccumulatorRef = useRef(0)
+    const WHEEL_THRESHOLD = 50
 
     const menuItems = [
         { id: 'about', label: 'VỀ CẶP ĐÔI', section: 'frame1' },
@@ -24,7 +30,12 @@ const NavbarVertical = () => {
         e.stopPropagation()
         if (isSpinning) return
 
-        const direction = e.deltaY > 0 ? 1 : -1
+        wheelAccumulatorRef.current += e.deltaY
+        if (Math.abs(wheelAccumulatorRef.current) < WHEEL_THRESHOLD) return
+
+        const direction = wheelAccumulatorRef.current > 0 ? 1 : -1
+        wheelAccumulatorRef.current = 0
+
         const newIndex = activeIndex + direction
 
         // ✅ Kiểm tra giới hạn: không cho vượt quá 0 hoặc totalItems-1
