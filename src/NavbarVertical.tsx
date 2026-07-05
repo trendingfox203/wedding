@@ -1,18 +1,33 @@
 // src/NavbarVertical.tsx
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './NavbarVertical.css'
 
+// Mục ở giữa danh sách khi mới tải trang (khớp với vị trí offset=0 ban đầu)
+const CENTER_INDEX = 2
+
 const NavbarVertical = () => {
-    const [activeIndex, setActiveIndex] = useState(2)
+    const [activeIndex, setActiveIndex] = useState(CENTER_INDEX)
     const [isSpinning, setIsSpinning] = useState(false)
     const [scrollOffset, setScrollOffset] = useState(0)
     const scrollTimeoutRef = useRef<number | null>(null)
+    const navRef = useRef<HTMLElement | null>(null)
     // Trackpad Mac bắn ra hàng loạt sự kiện wheel nhỏ liên tục (kèm hiệu ứng "trớn"
     // momentum kéo dài cả sau khi nhấc tay), khác hẳn chuột Windows (mỗi nấc 1 sự
     // kiện lớn, rời rạc). Cộng dồn deltaY và chỉ chuyển mục khi vượt ngưỡng để 2 nền
     // tảng cư xử giống nhau, tránh nhảy lung tung/lọt cuộn ở gần biên trên Mac.
     const wheelAccumulatorRef = useRef(0)
     const WHEEL_THRESHOLD = 50
+
+    // Đọc được giá trị mới nhất trong listener native mà không cần gắn/gỡ lại listener
+    // mỗi lần state đổi (tránh churn, và tránh closure bị "đứng hình" giá trị cũ)
+    const activeIndexRef = useRef(activeIndex)
+    const isSpinningRef = useRef(isSpinning)
+    useEffect(() => {
+        activeIndexRef.current = activeIndex
+    }, [activeIndex])
+    useEffect(() => {
+        isSpinningRef.current = isSpinning
+    }, [isSpinning])
 
     const menuItems = [
         { id: 'about', label: 'VỀ CẶP ĐÔI', section: 'frame1' },
@@ -25,35 +40,50 @@ const NavbarVertical = () => {
     const totalItems = menuItems.length
     const itemHeight = 42
 
-    const handleWheel = (e: React.WheelEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (isSpinning) return
+    // Gắn wheel listener bằng addEventListener native với { passive: false } thay vì
+    // prop onWheel của React - trên Safari/macOS, preventDefault() qua sự kiện tổng
+    // hợp của React đôi khi không chặn được cuộn/nảy trang gốc một cách đáng tin cậy
+    // khi thao tác bằng trackpad, khiến cuộn "lọt" xuống trang chính ở gần biên.
+    useEffect(() => {
+        const nav = navRef.current
+        if (!nav) return
 
-        wheelAccumulatorRef.current += e.deltaY
-        if (Math.abs(wheelAccumulatorRef.current) < WHEEL_THRESHOLD) return
+        const handleWheelNative = (e: WheelEvent) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (isSpinningRef.current) return
 
-        const direction = wheelAccumulatorRef.current > 0 ? 1 : -1
-        wheelAccumulatorRef.current = 0
+            wheelAccumulatorRef.current += e.deltaY
+            if (Math.abs(wheelAccumulatorRef.current) < WHEEL_THRESHOLD) return
 
-        const newIndex = activeIndex + direction
+            const direction = wheelAccumulatorRef.current > 0 ? 1 : -1
+            wheelAccumulatorRef.current = 0
 
-        // ✅ Kiểm tra giới hạn: không cho vượt quá 0 hoặc totalItems-1
-        if (newIndex < 0 || newIndex >= totalItems) return
+            const newIndex = activeIndexRef.current + direction
 
-        setIsSpinning(true)
-        setActiveIndex(newIndex)
-        setScrollOffset(prev => prev + direction * itemHeight)
+            // ✅ Kiểm tra giới hạn: không cho vượt quá 0 hoặc totalItems-1
+            if (newIndex < 0 || newIndex >= totalItems) return
 
-        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
-        scrollTimeoutRef.current = setTimeout(() => setIsSpinning(false), 400)
-    }
+            setIsSpinning(true)
+            setActiveIndex(newIndex)
+            setScrollOffset(prev => prev + direction * itemHeight)
+
+            if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
+            scrollTimeoutRef.current = setTimeout(() => setIsSpinning(false), 400)
+        }
+
+        nav.addEventListener('wheel', handleWheelNative, { passive: false })
+        return () => nav.removeEventListener('wheel', handleWheelNative)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const handleClick = (index: number) => {
-        if (index === activeIndex) {
-            const section = document.getElementById(menuItems[index].section)
-            if (section) section.scrollIntoView({ behavior: 'smooth' })
+        if (index !== activeIndex) {
+            setActiveIndex(index)
+            setScrollOffset((index - CENTER_INDEX) * itemHeight)
         }
+        const section = document.getElementById(menuItems[index].section)
+        if (section) section.scrollIntoView({ behavior: 'smooth' })
     }
 
     useEffect(() => {
@@ -84,7 +114,7 @@ const NavbarVertical = () => {
     }, [])
 
     return (
-        <nav className="navbar-vertical" onWheel={handleWheel}>
+        <nav className="navbar-vertical" ref={navRef}>
             <ul
                 className="navbar-vertical-menu"
                 style={{
@@ -99,20 +129,15 @@ const NavbarVertical = () => {
                     const distance = Math.abs(index - activeIndex)
 
                     let opacity = 0
-                    let pointerEvents: 'auto' | 'none' = 'none'
 
                     if (isActive) {
                         opacity = 1
-                        pointerEvents = 'auto'
                     } else if (distance === 1) {
                         opacity = 0.4
-                        pointerEvents = 'none'
                     } else if (distance === 2) {
                         opacity = 0.15
-                        pointerEvents = 'none'
                     } else {
                         opacity = 0.05
-                        pointerEvents = 'none'
                     }
 
                     return (
@@ -123,8 +148,8 @@ const NavbarVertical = () => {
                                 style={{
                                     opacity,
                                     transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-                                    pointerEvents,
-                                    cursor: isActive ? 'pointer' : 'default',
+                                    pointerEvents: 'auto',
+                                    cursor: 'pointer',
                                 }}
                             >
                                 <span className="nav-vertical-label">{item.label}</span>
