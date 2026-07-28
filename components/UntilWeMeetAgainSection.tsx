@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { weddingConfig, formatWeddingDate } from "@/lib/wedding-config";
+import { weddingConfig } from "@/lib/wedding-config";
 import { Reveal } from "./Reveal";
 
 // Photo block measured directly off the Figma export at the frame's native 1920px width
@@ -26,8 +26,13 @@ export function UntilWeMeetAgainSection() {
           </h2>
           <div className="h-px w-14 bg-cream/70" />
           <p className="font-gt-italic text-lg">{closing.subheading}</p>
-          <p className="font-velour text-lg uppercase tracking-wide">
-            {formatWeddingDate()}
+          <p className="font-gt text-lg uppercase tracking-wide">
+            {weddingConfig.weddingDateDisplay.day}
+            <sup style={{ fontSize: "0.6em", }}>
+              {weddingConfig.weddingDateDisplay.ordinal}
+            </sup>{" "}
+            {weddingConfig.weddingDateDisplay.month.toUpperCase()}{" "}
+            {weddingConfig.weddingDateDisplay.year}
           </p>
           <div className="h-px w-14 bg-cream/70" />
         </Reveal>

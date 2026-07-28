@@ -12,19 +12,19 @@ export function FAQSection() {
   return (
     <section
       id="faq"
-      className="relative flex min-h-screen items-start justify-center overflow-hidden bg-rose py-24 text-cream"
+      className="relative flex min-h-screen items-start justify-center overflow-hidden bg-wine py-24 text-cream"
     >
       {/* Fixed-height wrapper (not tied to the section's own height) so opening/closing an
           accordion item — which changes the section's height — never resizes this image and
           triggers an object-cover re-crop. min-h covers the worst case (heading + all questions
           closed + the single longest answer open, measured at ~1004px) on short viewports; on
-          tall viewports h-screen takes over instead. Any remaining extra just shows bg-rose. */}
+          tall viewports h-screen takes over instead. Any remaining extra just shows bg-wine. */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-screen w-full min-h-[1050px] overflow-hidden"
         aria-hidden
       >
         <Image
-          src="/images/faq-illustration-tinted.webp"
+          src="/images/rsvp-illustration.webp"
           alt=""
           fill
           className="object-cover"

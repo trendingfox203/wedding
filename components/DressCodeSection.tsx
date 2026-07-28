@@ -6,13 +6,13 @@ export function DressCodeSection() {
   const { dressCode } = weddingConfig;
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-rose py-24 text-cream">
+    <section className="relative flex min-h-screen items-center overflow-hidden bg-wine py-24 text-cream">
       <Image
-        src="/images/dresscode-paper-frame.webp"
+        src="/images/dresscode_bg.webp"
         alt=""
         fill
         aria-hidden
-        className="pointer-events-none object-cover mix-blend-multiply opacity-70"
+        className="pointer-events-none object-cover"
       />
 
       <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-6 text-center">

@@ -36,7 +36,7 @@ export function SaveTheDateSection() {
       <div className="absolute inset-0 bg-ink/70" />
 
       <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-6 px-6">
-        <div className="relative aspect-[696/335] w-full overflow-hidden shadow-lg">
+        <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
           <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pt-10 pb-4">
             <div className="flex justify-center gap-6 sm:gap-10">
@@ -45,7 +45,7 @@ export function SaveTheDateSection() {
                   <span className="font-serif text-2xl text-cream tabular-nums sm:text-3xl">
                     {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                   </span>
-                  <span className="font-script text-sm text-cream/90 sm:text-base">
+                  <span className="font-parfumerie leading-none text-sm text-cream/90 sm:text-base">
                     {unit.label}
                   </span>
                 </div>
@@ -55,15 +55,23 @@ export function SaveTheDateSection() {
         </div>
 
         <div className="grid w-full grid-cols-2 shadow-lg">
-          <div className="flex aspect-[10/9] items-center justify-center bg-cream px-6">
-            <p className="font-serif text-lg text-ink sm:text-xl">
-              {weddingConfig.weddingDateDisplay.day}
-              <sup>{weddingConfig.weddingDateDisplay.ordinal}</sup>{" "}
+          <div className="flex aspect-[695/646] items-center justify-center bg-white px-6">
+            <p className="font-gt text-lg text-ink sm:text-xl">
+              {/* Playfair Display's digit glyphs render ~27% shorter than its capital
+                  letters at the same font-size, so the day number is scaled up here
+                  to visually match the cap-height of the surrounding month/year text. */}
+              {/* <span style={{ fontSize: "1.36em" }}> */}
+                {weddingConfig.weddingDateDisplay.day}
+                <sup style={{ fontSize: "0.6em" }}>
+                {weddingConfig.weddingDateDisplay.ordinal}
+              </sup>{" "}
               {weddingConfig.weddingDateDisplay.month.toUpperCase()}{" "}
               {weddingConfig.weddingDateDisplay.year}
+                {/* </span> */}
+              
             </p>
           </div>
-          <div className="relative aspect-[10/9] w-full overflow-hidden">
+          <div className="relative aspect-[695/646] w-full overflow-hidden">
             <Image src="/images/savedate-hand-v4.jpg" alt="" fill className="object-cover grayscale" />
           </div>
         </div>

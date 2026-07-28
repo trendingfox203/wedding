@@ -106,7 +106,7 @@ export function RSVPForm() {
 
         <Reveal>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="order-1 grid gap-6 sm:grid-cols-2">
               <Field label="Full Name" error={errors.fullName?.message}>
                 <input
                   {...register("fullName", { required: "Vui lòng nhập họ tên" })}
@@ -124,7 +124,7 @@ export function RSVPForm() {
               </Field>
             </div>
 
-            <Field label="Email" error={errors.email?.message}>
+            <Field label="Email" error={errors.email?.message} className="order-2">
               <input
                 {...register("email", { required: "Vui lòng nhập email" })}
                 className="input"
@@ -132,52 +132,67 @@ export function RSVPForm() {
               />
             </Field>
 
-            <fieldset className="flex flex-col gap-2">
+            <fieldset className="order-3 flex flex-col gap-2">
               <legend className="font-velour text-sm">Will you be attending?</legend>
-              <div className="flex gap-6 pt-1">
+              <div className="flex flex-wrap gap-3 pt-1">
                 {(["Joyfully accepts", "Regretfully declines"] as const).map((option) => (
-                  <label key={option} className="font-velour flex items-center gap-2 text-sm">
-                    <input type="radio" value={option} {...register("attending")} />
+                  <label
+                    key={option}
+                    className={`font-velour cursor-pointer rounded-full border px-5 py-2 text-sm transition-colors ${
+                      attending === option
+                        ? "border-cream bg-cream text-wine"
+                        : "border-cream/40 text-cream/80 hover:border-cream/70"
+                    }`}
+                  >
+                    <input type="radio" value={option} {...register("attending")} className="sr-only" />
                     {option}
                   </label>
                 ))}
               </div>
             </fieldset>
 
-            {attending === "Joyfully accepts" && (
-              <>
-                <Field label="How many guests will attend?">
-                  <select {...register("guestCount")} className="input">
-                    {weddingConfig.rsvp.guestCountOptions.map((n) => (
-                      <option key={n} value={n} className="text-ink">
-                        {n}
-                      </option>
-                    ))}
-                  </select>
+            {/* Kept mounted and in flow (just invisible, not removed) so the form's natural
+                height never changes when switching options — per the earlier request to keep
+                the same size as the "accepts" state. The order-* classes below reorder what's
+                *visible* so Confirm still sits right after the attending toggle when declining,
+                instead of leaving a gap: the invisible block just gets pushed past the button. */}
+            <div
+              aria-hidden={attending !== "Joyfully accepts"}
+              className={`flex flex-col gap-6 ${
+                attending === "Joyfully accepts" ? "order-4" : "invisible order-6"
+              }`}
+            >
+              <Field label="How many guests will attend?">
+                <select {...register("guestCount")} className="input">
+                  {weddingConfig.rsvp.guestCountOptions.map((n) => (
+                    <option key={n} value={n} className="text-ink">
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Guest Name(s)">
+                <input {...register("guestNames")} className="input" type="text" />
+              </Field>
+
+              <Field label="Dietary Requirements">
+                <input {...register("dietary")} className="input" type="text" />
+              </Field>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="Arrival Date in Ho Chi Minh City">
+                  <input {...register("arrivalDate")} className="input" type="date" />
                 </Field>
 
-                <Field label="Guest Name(s)">
-                  <input {...register("guestNames")} className="input" type="text" />
+                <Field label="Departure Date from Ho Chi Minh City">
+                  <input {...register("departureDate")} className="input" type="date" />
                 </Field>
-
-                <Field label="Dietary Requirements">
-                  <input {...register("dietary")} className="input" type="text" />
-                </Field>
-
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <Field label="Arrival Date in Ho Chi Minh City">
-                    <input {...register("arrivalDate")} className="input" type="date" />
-                  </Field>
-
-                  <Field label="Departure Date from Ho Chi Minh City">
-                    <input {...register("departureDate")} className="input" type="date" />
-                  </Field>
-                </div>
-              </>
-            )}
+              </div>
+            </div>
 
             {state === "error" && (
-              <p className="text-sm text-red-300">
+              <p className={`text-sm text-red-300 ${attending === "Joyfully accepts" ? "order-5" : "order-4"}`}>
                 Có lỗi khi gửi RSVP. Vui lòng thử lại hoặc liên hệ {weddingConfig.contactEmail}.
               </p>
             )}
@@ -185,7 +200,9 @@ export function RSVPForm() {
             <button
               type="submit"
               disabled={state === "submitting"}
-              className="mt-2 rounded-full bg-cream px-8 py-3.5 font-serif text-base text-wine transition-opacity hover:opacity-90 disabled:opacity-50"
+              className={`mt-2 rounded-full bg-cream px-8 py-3.5 font-serif text-base text-wine transition-opacity hover:opacity-90 disabled:opacity-50 ${
+                attending === "Joyfully accepts" ? "order-6" : "order-5"
+              }`}
             >
               {state === "submitting" ? "Sending..." : "Confirm"}
             </button>
@@ -200,13 +217,15 @@ function Field({
   label,
   error,
   children,
+  className,
 }: {
   label: string;
   error?: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <label className="flex flex-col gap-2">
+    <label className={`flex flex-col gap-2 ${className ?? ""}`}>
       <span className="font-velour text-sm">{label}</span>
       {children}
       {error && <span className="text-xs text-red-300">{error}</span>}

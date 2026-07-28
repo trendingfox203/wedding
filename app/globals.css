@@ -9,8 +9,8 @@
   --color-rose: #b2847b;
   --color-wine: #3d2b2c;
   --color-cream: #f4ede0;
-  --color-cream-dim: #e6d9c4;
-
+  --color-cream-dim: #edede3;
+  --color-white: #fff;
   --background: var(--color-cream);
   --foreground: var(--color-ink);
 }
@@ -28,6 +28,7 @@
   --font-sans: var(--font-body);
   --font-velour: var(--font-velour);
   --font-parfumerie: var(--font-parfumerie);
+  --font-gt: var(--font-gt);
   --font-gt-italic: var(--font-gt-italic);
   --font-milton: var(--font-milton);
   --font-valencia: var(--font-valencia);

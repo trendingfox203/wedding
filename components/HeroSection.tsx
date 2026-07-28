@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { weddingConfig } from "@/lib/wedding-config";
+import { weddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
 
 export function HeroSection() {
-  const { groom, bride, weddingDateDisplay, tagline, openInvitationLabel } = weddingConfig;
+  const { groom, bride, tagline, openInvitationLabel } = weddingConfig;
 
   return (
     <section id="top" className="relative h-screen min-h-[640px] w-full overflow-hidden">
@@ -15,29 +15,46 @@ export function HeroSection() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/30" />
 
+      {/* Sizes use clamp(min, vw, max) instead of fixed px — the Figma reference
+          is a 1920px-wide frame, so fixed px only looks right at ~1920px
+          viewports. The vw term keeps the same proportion at any width; the
+          min/max bounds keep it sane on very narrow or very wide screens.
+          Same fix as frame3. */}
       <div className="relative z-10 flex h-full flex-col items-center px-6 text-center text-cream [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
         <div className="flex flex-col items-center pt-[12vh]">
-          <h2 className="font-velour text-lg uppercase tracking-[0.5em] sm:text-2xl">
+          <h2
+            className="font-velour uppercase"
+            style={{ fontSize: "clamp(32px, 4.11vw, 90px)", letterSpacing: "clamp(4px, 0.26vw, 6px)", lineHeight: 1.25 }}
+          >
             A Love Story
           </h2>
-          <div className="mt-5 h-px w-14 bg-cream/80" />
-          <p className="font-velour mt-5 text-xs uppercase tracking-[0.4em] sm:text-sm">
-            {weddingDateDisplay.day}
-            <sup>{weddingDateDisplay.ordinal}</sup> {weddingDateDisplay.month}{" "}
-            {weddingDateDisplay.year}
+          <p
+            className="font-velour mt-3 uppercase tracking-[0.4em]"
+            style={{ fontSize: "clamp(13px, 1.15vw, 26px)", lineHeight: 1.25 }}
+          >
+            {formatWeddingDateShort()}
           </p>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center">
-          <h1 className="font-parfumerie text-6xl leading-none sm:text-8xl md:text-9xl">
+          <h1
+            className="font-parfumerie leading-none"
+            style={{ fontSize: "clamp(85px, 12.71vw, 260px)" }}
+          >
             {groom.shortName} &amp; {bride.shortName}
           </h1>
-          <p className="font-gt-italic mt-4 text-lg italic sm:text-xl">{tagline}</p>
+          <p
+            className="font-parfumerie leading-none"
+            style={{ fontSize: "clamp(28px, 4.11vw, 90px)", marginTop: "clamp(14px, 1.67vw, 34px)" }}
+          >
+            {tagline}
+          </p>
         </div>
 
         <a
           href="#story"
-          className="mb-[8vh] w-48 transition-transform hover:scale-105 sm:w-56"
+          className="mb-[3vh] transition-transform hover:scale-105"
+          style={{ width: "clamp(200px, 19.06vw, 400px)" }}
         >
           <Image
             src="/images/open-invitation-button.png"

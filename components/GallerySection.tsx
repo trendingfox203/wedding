@@ -43,12 +43,12 @@ export function GallerySection() {
               <p className="w-full font-velour text-xs leading-relaxed">
                {gallery.quote}
               </p>
-              <div className="relative aspect-[16/9] w-[73%]">
+              <div className="relative aspect-[16/9] w-[78%] self-end">
                 <Image
                   src={gallery.signatureImage}
                   alt={`${groom.fullName} & ${bride.fullName}`}
                   fill
-                  className="object-contain object-left"
+                  className="object-contain object-right"
                 />
               </div>
             </div>

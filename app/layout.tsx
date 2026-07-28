@@ -26,11 +26,15 @@ const velour = localFont({
 
 // Hero (frame1): "Duy & Khanh".
 const parfumerie = localFont({
-  src: "./fonts/ParfumerieScriptRegular.otf",
+  src: "./fonts/ParfumerieScriptText.otf",
   variable: "--font-parfumerie",
   display: "swap",
 });
-
+const gtDisplay = localFont({
+  src: "./fonts/GTSuperDisplay-Regular.otf",
+  variable: "--font-gt",
+  display: "swap",
+});
 // Hero (frame1): "With love".
 const gtDisplayItalic = localFont({
   src: "./fonts/GT-Super-Display-Light-Italic.otf",
