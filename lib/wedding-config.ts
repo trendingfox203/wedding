@@ -155,11 +155,13 @@ export const weddingConfig = {
     endpoint: "",
     guestCountOptions: [1, 2, 3, 4, 5],
     successMessage: {
-      title: "Thank you for your RSVP.",
+      heading: "Thank you",
+      subheading: "For your RSVP",
       body: "We are delighted that you will be joining us and look forward to celebrating together.",
     },
     declineMessage: {
-      title: "Thank you for letting us know.",
+      heading: "Thank you",
+      subheading: "Letting us know",
       body: "While we will miss having you with us, we completely understand and hope to see you soon.",
     },
   },

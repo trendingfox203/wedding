@@ -71,106 +71,126 @@ export function RSVPForm() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-screen w-full min-h-[1350px] overflow-hidden" aria-hidden>
         <Image src="/images/rsvp-illustration.webp" alt="" fill className="object-cover" />
       </div>
+      {state === "success" && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
+        >
+          <div className="relative w-full max-w-lg overflow-hidden rounded-sm shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setState("idle")}
+              aria-label="Close"
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-xl leading-none text-ink transition-colors hover:bg-black/20"
+            >
+              ×
+            </button>
+            <div className="relative aspect-[1702/1042] w-full">
+              <Image
+                src={attending === "Joyfully accepts" ? "/images/rsvp-thanks-yes.webp" : "/images/rsvp-thanks-no.webp"}
+                alt={`${message.heading} ${message.subheading}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative mx-auto max-w-2xl px-6">
         <Reveal className="mb-12 flex flex-col items-center gap-2 text-center">
           <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Kindly</h2>
           <h3 className="font-velour mt-2 text-4xl uppercase tracking-wide sm:text-5xl">RSVP</h3>
         </Reveal>
 
-        {state === "success" ? (
-          <Reveal className="font-velour py-8 text-center">
-            <h4 className="text-2xl">{message.title}</h4>
-            <p className="mt-4 text-cream/80">{message.body}</p>
-          </Reveal>
-        ) : (
-          <Reveal>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Full Name" error={errors.fullName?.message}>
-                  <input
-                    {...register("fullName", { required: "Vui lòng nhập họ tên" })}
-                    className="input"
-                    type="text"
-                  />
-                </Field>
-
-                <Field label="Phone Number" error={errors.phone?.message}>
-                  <input
-                    {...register("phone", { required: "Vui lòng nhập số điện thoại" })}
-                    className="input"
-                    type="tel"
-                  />
-                </Field>
-              </div>
-
-              <Field label="Email" error={errors.email?.message}>
+        <Reveal>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Field label="Full Name" error={errors.fullName?.message}>
                 <input
-                  {...register("email", { required: "Vui lòng nhập email" })}
+                  {...register("fullName", { required: "Vui lòng nhập họ tên" })}
                   className="input"
-                  type="email"
+                  type="text"
                 />
               </Field>
 
-              <fieldset className="flex flex-col gap-2">
-                <legend className="font-velour text-sm">Will you be attending?</legend>
-                <div className="flex gap-6 pt-1">
-                  {(["Joyfully accepts", "Regretfully declines"] as const).map((option) => (
-                    <label key={option} className="font-velour flex items-center gap-2 text-sm">
-                      <input type="radio" value={option} {...register("attending")} />
-                      {option}
-                    </label>
-                  ))}
+              <Field label="Phone Number" error={errors.phone?.message}>
+                <input
+                  {...register("phone", { required: "Vui lòng nhập số điện thoại" })}
+                  className="input"
+                  type="tel"
+                />
+              </Field>
+            </div>
+
+            <Field label="Email" error={errors.email?.message}>
+              <input
+                {...register("email", { required: "Vui lòng nhập email" })}
+                className="input"
+                type="email"
+              />
+            </Field>
+
+            <fieldset className="flex flex-col gap-2">
+              <legend className="font-velour text-sm">Will you be attending?</legend>
+              <div className="flex gap-6 pt-1">
+                {(["Joyfully accepts", "Regretfully declines"] as const).map((option) => (
+                  <label key={option} className="font-velour flex items-center gap-2 text-sm">
+                    <input type="radio" value={option} {...register("attending")} />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            {attending === "Joyfully accepts" && (
+              <>
+                <Field label="How many guests will attend?">
+                  <select {...register("guestCount")} className="input">
+                    {weddingConfig.rsvp.guestCountOptions.map((n) => (
+                      <option key={n} value={n} className="text-ink">
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+
+                <Field label="Guest Name(s)">
+                  <input {...register("guestNames")} className="input" type="text" />
+                </Field>
+
+                <Field label="Dietary Requirements">
+                  <input {...register("dietary")} className="input" type="text" />
+                </Field>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <Field label="Arrival Date in Ho Chi Minh City">
+                    <input {...register("arrivalDate")} className="input" type="date" />
+                  </Field>
+
+                  <Field label="Departure Date from Ho Chi Minh City">
+                    <input {...register("departureDate")} className="input" type="date" />
+                  </Field>
                 </div>
-              </fieldset>
+              </>
+            )}
 
-              {attending === "Joyfully accepts" && (
-                <>
-                  <Field label="How many guests will attend?">
-                    <select {...register("guestCount")} className="input">
-                      {weddingConfig.rsvp.guestCountOptions.map((n) => (
-                        <option key={n} value={n} className="text-ink">
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
+            {state === "error" && (
+              <p className="text-sm text-red-300">
+                Có lỗi khi gửi RSVP. Vui lòng thử lại hoặc liên hệ {weddingConfig.contactEmail}.
+              </p>
+            )}
 
-                  <Field label="Guest Name(s)">
-                    <input {...register("guestNames")} className="input" type="text" />
-                  </Field>
-
-                  <Field label="Dietary Requirements">
-                    <input {...register("dietary")} className="input" type="text" />
-                  </Field>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <Field label="Arrival Date in Ho Chi Minh City">
-                      <input {...register("arrivalDate")} className="input" type="date" />
-                    </Field>
-
-                    <Field label="Departure Date from Ho Chi Minh City">
-                      <input {...register("departureDate")} className="input" type="date" />
-                    </Field>
-                  </div>
-                </>
-              )}
-
-              {state === "error" && (
-                <p className="text-sm text-red-300">
-                  Có lỗi khi gửi RSVP. Vui lòng thử lại hoặc liên hệ {weddingConfig.contactEmail}.
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={state === "submitting"}
-                className="mt-2 rounded-full bg-cream px-8 py-3.5 font-serif text-base text-wine transition-opacity hover:opacity-90 disabled:opacity-50"
-              >
-                {state === "submitting" ? "Sending..." : "Confirm"}
-              </button>
-            </form>
-          </Reveal>
-        )}
+            <button
+              type="submit"
+              disabled={state === "submitting"}
+              className="mt-2 rounded-full bg-cream px-8 py-3.5 font-serif text-base text-wine transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {state === "submitting" ? "Sending..." : "Confirm"}
+            </button>
+          </form>
+        </Reveal>
       </div>
     </section>
   );
