@@ -77,7 +77,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${script.variable} ${velour.variable} ${parfumerie.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full snap-y snap-proximity antialiased`}
+      className={`${playfair.variable} ${script.variable} ${velour.variable} ${parfumerie.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
     </html>

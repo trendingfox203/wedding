@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { SaveTheDateSection } from "./SaveTheDateSection";
-import { TimelineSection } from "./TimelineSection";
+import { TimelineSection, type TimelineHandle } from "./TimelineSection";
 import { GallerySection } from "./GallerySection";
 import { VideoBackground } from "./VideoBackground";
 
-export function VideoSectionsGroup() {
+export function VideoSectionsGroup({ timelineRef }: { timelineRef: Ref<TimelineHandle> }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -28,7 +28,7 @@ export function VideoSectionsGroup() {
         </div>
       )}
       <SaveTheDateSection />
-      <TimelineSection />
+      <TimelineSection ref={timelineRef} />
       <GallerySection />
     </div>
   );

@@ -32,7 +32,7 @@ export function SaveTheDateSection() {
   ];
 
   return (
-    <section className="relative flex min-h-screen snap-start items-center overflow-hidden py-20">
+    <section className="relative flex min-h-screen items-center overflow-hidden py-20">
       <div className="absolute inset-0 bg-ink/70" />
 
       <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-6 px-6">

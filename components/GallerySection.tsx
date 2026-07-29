@@ -14,7 +14,7 @@ export function GallerySection() {
   const next = () => setIndex((i) => (i + 1) % count);
 
   return (
-    <section className="relative flex min-h-screen snap-start items-center overflow-hidden py-16">
+    <section className="relative flex min-h-screen items-center overflow-hidden py-16">
       <div className="absolute inset-0 bg-ink/70" />
 
       <div className="relative mx-auto flex max-w-4xl items-center px-4">

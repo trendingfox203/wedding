@@ -18,7 +18,6 @@ function doPost(e) {
   const data = JSON.parse(e.postData.contents);
 
   sheet.appendRow([
-    new Date(),
     data.fullName || "",
     data.phone || "",
     data.email || "",
@@ -28,6 +27,7 @@ function doPost(e) {
     data.dietary || "",
     data.arrivalDate || "",
     data.departureDate || "",
+    new Date().toLocaleString('vi-VN'), // Thời gian gửi
   ]);
 
   return ContentService.createTextOutput(

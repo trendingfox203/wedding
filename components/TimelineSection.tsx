@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
@@ -10,15 +10,26 @@ type TimelineItem = { title: string; text: string; photo: string };
 
 // Desktop content is scaled down from the raw Figma measurements so the whole
 // section fits within one viewport height (no scroll) — needed for the
-// swipe/click-to-advance milestones feature below.
+// site-wide slide navigation (useSlideNavigation) to treat this section as a
+// single slide with its own past/future sub-step.
 const SCALE = 0.72;
 const s = (px: number) => Math.round(px * SCALE);
 
-// How long a wheel/swipe-triggered set switch blocks further switches, so one
-// physical scroll gesture (which fires many wheel events) only advances once.
-const SWITCH_LOCK_MS = 700;
-// Minimum vertical touch movement to count as an intentional swipe.
-const SWIPE_THRESHOLD_PX = 40;
+// Imperative API driven by useSlideNavigation (the site-wide "one scroll =
+// one slide" controller) instead of this component owning its own
+// wheel/touch listeners — the controller needs to know, for the section it
+// currently treats as "active", whether a scroll-down/up should switch the
+// milestone set (handled here) or move on to the next/previous slide.
+export type TimelineHandle = {
+  /** Try to switch milestone set in the given direction. Returns true if it
+   *  handled the step internally (stay on this slide), false if already at
+   *  that boundary (the caller should advance to the next/previous slide). */
+  tryAdvance: (down: boolean) => boolean;
+  /** Called right when this slide becomes active, so it opens on the
+   *  set that matches the direction of entry. */
+  enterFromTop: () => void;
+  enterFromBottom: () => void;
+};
 
 // Timeline items animate on mount/switch (not on scroll-into-view like Reveal)
 // because the whole set is meant to be visible at once — an element sitting
@@ -81,77 +92,31 @@ function PhotoBlock({
 
 const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
 
-export function TimelineSection() {
+export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSection(_props, ref) {
   const { timeline } = weddingConfig;
   const [showFuture, setShowFuture] = useState(false);
   const items = showFuture ? timeline.future : timeline.past;
   const [item0, item1, item2] = items;
   const setKey = showFuture ? "future" : "past";
 
-  const sectionRef = useRef<HTMLElement>(null);
-  const isActiveRef = useRef(false);
-  const lockedRef = useRef(false);
-  const touchStartYRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isActiveRef.current = entry.intersectionRatio > 0.6;
+  useImperativeHandle(
+    ref,
+    () => ({
+      tryAdvance(down: boolean) {
+        if (down && showFuture) return false;
+        if (!down && !showFuture) return false;
+        setShowFuture(down);
+        return true;
       },
-      { threshold: [0, 0.6, 1] },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  function tryAdvance(goingDown: boolean) {
-    if (!isActiveRef.current || lockedRef.current) return false;
-    // At the last set and scrolling down, or at the first set and scrolling
-    // up: let the browser scroll to the next/previous section normally.
-    if (goingDown && showFuture) return false;
-    if (!goingDown && !showFuture) return false;
-
-    lockedRef.current = true;
-    setShowFuture(goingDown);
-    window.setTimeout(() => {
-      lockedRef.current = false;
-    }, SWITCH_LOCK_MS);
-    return true;
-  }
-
-  useEffect(() => {
-    function onWheel(e: WheelEvent) {
-      if (!isActiveRef.current || Math.abs(e.deltaY) < 2) return;
-      if (tryAdvance(e.deltaY > 0)) e.preventDefault();
-    }
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => window.removeEventListener("wheel", onWheel);
-  }, [showFuture]);
-
-  useEffect(() => {
-    function onTouchStart(e: TouchEvent) {
-      touchStartYRef.current = e.touches[0]?.clientY ?? null;
-    }
-    function onTouchMove(e: TouchEvent) {
-      if (!isActiveRef.current || touchStartYRef.current === null) return;
-      const currentY = e.touches[0]?.clientY;
-      if (currentY === undefined) return;
-      const delta = touchStartYRef.current - currentY;
-      if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return;
-      if (tryAdvance(delta > 0)) {
-        e.preventDefault();
-        touchStartYRef.current = currentY;
-      }
-    }
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    return () => {
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-    };
-  }, [showFuture]);
+      enterFromTop() {
+        setShowFuture(false);
+      },
+      enterFromBottom() {
+        setShowFuture(true);
+      },
+    }),
+    [showFuture],
+  );
 
   function Heading({ fontSize }: { fontSize?: number }) {
     return (
@@ -169,10 +134,7 @@ export function TimelineSection() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-screen snap-start items-center overflow-hidden py-24 text-cream sm:py-8"
-    >
+    <section className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream sm:py-8">
       <div className="absolute inset-0 bg-ink/70" />
       <div className="relative mx-auto max-w-3xl px-6">
         {/* Mobile: single sequential column, heading on top */}
@@ -264,4 +226,4 @@ export function TimelineSection() {
       </div>
     </section>
   );
-}
+});

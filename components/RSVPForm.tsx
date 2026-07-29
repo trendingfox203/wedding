@@ -29,7 +29,7 @@ export function RSVPForm() {
     watch,
     formState: { errors },
   } = useForm<RSVPFormValues>({
-    defaultValues: { attending: "Joyfully accepts", guestCount: "1" },
+    defaultValues: { attending: "Joyfully accepts"},
   });
   const [state, setState] = useState<SubmitState>("idle");
   const attending = watch("attending");
@@ -40,13 +40,22 @@ export function RSVPForm() {
       if (!weddingConfig.rsvp.endpoint) {
         throw new Error("RSVP endpoint chưa được cấu hình (weddingConfig.rsvp.endpoint).");
       }
+      // Các field chỉ áp dụng khi "accepts" (số khách, tên khách, ăn kiêng, ngày đến/đi)
+      // vẫn ở trong DOM khi "declines" (chỉ ẩn bằng invisible, không unmount) để giữ
+      // nguyên chiều cao form — nhưng vì thế input vẫn giữ giá trị cũ (hoặc select mặc
+      // định "1") dù người dùng không còn thấy/chỉnh chúng nữa. Xoá sạch các field này
+      // khỏi payload khi declines để không gửi dữ liệu "ma" lên sheet.
+      const payload: RSVPFormValues =
+        values.attending === "Joyfully accepts"
+          ? values
+          : { ...values, guestCount: "", guestNames: "", dietary: "", arrivalDate: "", departureDate: "" };
       // Google Apps Script Web App không hỗ trợ CORS preflight cho JSON:
       // dùng no-cors + text/plain để tránh preflight, Apps Script tự parse JSON từ e.postData.contents.
       await fetch(weddingConfig.rsvp.endpoint, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       setState("success");
     } catch (err) {

@@ -152,7 +152,8 @@ export const weddingConfig = {
   // --- RSVP form: cấu trúc field thật từ tài liệu ---
   rsvp: {
     // Web App URL sau khi deploy scripts/apps-script.gs lên Google Apps Script.
-    endpoint: "",
+    endpoint:
+      "https://script.google.com/macros/s/AKfycbyL2t4bWYx1DrJioe7YOK9JizjtfGkscF1I5qKXrkMl9-ASRVzGwOKagybc0WDouPrY/exec",
     guestCountOptions: [1, 2, 3, 4, 5],
     successMessage: {
       heading: "Thank you",
