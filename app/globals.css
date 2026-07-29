@@ -27,11 +27,15 @@
   --font-script: var(--font-script);
   --font-sans: var(--font-body);
   --font-velour: var(--font-velour);
+  --font-velour-light: var(--font-velour-light);
   --font-parfumerie: var(--font-parfumerie);
+  --font-parfumerie-old: var(--font-parfumerie-old);
+  --font-parfumerie-regular: var(--font-parfumerie-regular);
   --font-gt: var(--font-gt);
   --font-gt-italic: var(--font-gt-italic);
   --font-milton: var(--font-milton);
   --font-valencia: var(--font-valencia);
+  --font-valenciaLight: var(--font-valenciaLight);
 }
 
 .stroke-thin {

@@ -23,28 +23,31 @@ export function HeroSection() {
       <div className="relative z-10 flex h-full flex-col items-center px-6 text-center text-cream [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
         <div className="flex flex-col items-center pt-[12vh]">
           <h2
-            className="font-velour uppercase"
+            className="font-velour-light uppercase"
             style={{ fontSize: "clamp(32px, 4.11vw, 90px)", letterSpacing: "clamp(4px, 0.26vw, 6px)", lineHeight: 1.25 }}
           >
             A Love Story
           </h2>
           <p
-            className="font-velour mt-3 uppercase tracking-[0.4em]"
-            style={{ fontSize: "clamp(13px, 1.15vw, 26px)", lineHeight: 1.25 }}
+            className="font-velour-light mt-3 uppercase tracking-[0.05em]"
+            style={{ fontSize: "clamp(13px, 1.25vw, 26px)", lineHeight: 1.25 }}
           >
             {formatWeddingDateShort()}
           </p>
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center">
+        <div
+          className="relative flex flex-1 flex-col items-center justify-center"
+          style={{ paddingBottom: "120px"}}
+        >
           <h1
             className="font-parfumerie leading-none"
             style={{ fontSize: "clamp(85px, 12.71vw, 260px)" }}
           >
-            {groom.shortName} &amp; {bride.shortName}
+            {groom.shortName} <span className="font-parfumerie-old">&amp;</span> {bride.shortName}
           </h1>
           <p
-            className="font-parfumerie leading-none"
+            className="font-parfumerie-regular leading-none"
             style={{ fontSize: "clamp(28px, 4.11vw, 90px)", marginTop: "clamp(14px, 1.67vw, 34px)" }}
           >
             {tagline}

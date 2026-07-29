@@ -25,7 +25,7 @@ export function DressCodeSection() {
 
         <Reveal delay={0.15} className="relative mt-4 w-full max-w-2xl">
           <Image
-            src="/images/dresscode-illustration-v2.png"
+            src="/images/dresscode-illustration-v2.webp"
             alt="Guests in the wedding's dress code palette"
             width={924}
             height={428}

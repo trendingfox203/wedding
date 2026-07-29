@@ -29,7 +29,7 @@ export function RSVPForm() {
     watch,
     formState: { errors },
   } = useForm<RSVPFormValues>({
-    defaultValues: { attending: "Joyfully accepts"},
+    defaultValues: { attending: "Joyfully accepts" },
   });
   const [state, setState] = useState<SubmitState>("idle");
   const attending = watch("attending");
@@ -147,11 +147,10 @@ export function RSVPForm() {
                 {(["Joyfully accepts", "Regretfully declines"] as const).map((option) => (
                   <label
                     key={option}
-                    className={`font-velour cursor-pointer rounded-full border px-5 py-2 text-sm transition-colors ${
-                      attending === option
-                        ? "border-cream bg-cream text-wine"
-                        : "border-cream/40 text-cream/80 hover:border-cream/70"
-                    }`}
+                    className={`font-velour cursor-pointer rounded-full border px-5 py-2 text-sm transition-colors ${attending === option
+                      ? "border-cream bg-cream text-wine"
+                      : "border-cream/40 text-cream/80 hover:border-cream/70"
+                      }`}
                   >
                     <input type="radio" value={option} {...register("attending")} className="sr-only" />
                     {option}
@@ -167,9 +166,8 @@ export function RSVPForm() {
                 instead of leaving a gap: the invisible block just gets pushed past the button. */}
             <div
               aria-hidden={attending !== "Joyfully accepts"}
-              className={`flex flex-col gap-6 ${
-                attending === "Joyfully accepts" ? "order-4" : "invisible order-6"
-              }`}
+              className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-4" : "invisible order-6"
+                }`}
             >
               <Field label="How many guests will attend?">
                 <select {...register("guestCount")} className="input">
@@ -189,7 +187,7 @@ export function RSVPForm() {
                 <input {...register("dietary")} className="input" type="text" />
               </Field>
 
-              <div className="grid gap-6 sm:grid-cols-2">
+              {/* <div className="grid gap-6 sm:grid-cols-2">
                 <Field label="Arrival Date in Ho Chi Minh City">
                   <input {...register("arrivalDate")} className="input" type="date" />
                 </Field>
@@ -197,7 +195,7 @@ export function RSVPForm() {
                 <Field label="Departure Date from Ho Chi Minh City">
                   <input {...register("departureDate")} className="input" type="date" />
                 </Field>
-              </div>
+              </div> */}
             </div>
 
             {state === "error" && (
@@ -209,12 +207,16 @@ export function RSVPForm() {
             <button
               type="submit"
               disabled={state === "submitting"}
-              className={`mt-2 rounded-full bg-cream px-8 py-3.5 font-serif text-base text-wine transition-opacity hover:opacity-90 disabled:opacity-50 ${
-                attending === "Joyfully accepts" ? "order-6" : "order-5"
-              }`}
+              className={`mt-2 rounded-full px-8 py-3.5 font-velour text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"
+                }`}
+              style={{ backgroundColor: "#FEF7E9", color: "#501111" }}
             >
               {state === "submitting" ? "Sending..." : "Confirm"}
             </button>
+
+            <p className="font-velour order-7 text-center text-sm text-cream">
+              We kindly ask that you confirm your attendance before the RSVP deadline. Your response will help us prepare a wonderful celebration for everyone.
+            </p>
           </form>
         </Reveal>
       </div>

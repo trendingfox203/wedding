@@ -17,7 +17,7 @@ export function GallerySection() {
     <section className="relative flex min-h-screen items-center overflow-hidden py-16">
       <div className="absolute inset-0 bg-ink/70" />
 
-      <div className="relative mx-auto flex max-w-4xl items-center px-4">
+      <div className="relative mx-auto flex w-full max-w-4xl items-center px-4">
         {count > 1 && (
           <button
             type="button"
@@ -30,7 +30,12 @@ export function GallerySection() {
         )}
 
         <div className="grid flex-1 grid-cols-1 items-stretch sm:grid-cols-2 sm:items-start">
-          <div className="flex flex-col items-center justify-center gap-4 bg-cream-dim px-8 text-left text-ink sm:aspect-[653/785] sm:px-[9%]">
+          <div className="relative flex flex-col items-center justify-center gap-4 bg-cream-dim px-8 text-left text-ink sm:aspect-[653/785] sm:px-[9%]">
+            {/* Photo + quote + signature as one group, centered as a whole
+                in the frame — puts the photo right around the frame's
+                center with the quote trailing close behind it (~1 line
+                gap), instead of pinning the quote to the frame's bottom
+                edge (which put a big empty gap between photo and text). */}
             <div className="flex w-[55%] flex-col items-start gap-4">
               <div className="relative aspect-[8/9] w-full overflow-hidden">
                 <Image
@@ -40,8 +45,8 @@ export function GallerySection() {
                   className="object-cover"
                 />
               </div>
-              <p className="w-full font-velour text-xs leading-relaxed">
-               {gallery.quote}
+              <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
+                {gallery.quote}
               </p>
               <div className="relative aspect-[16/9] w-[78%] self-end">
                 <Image

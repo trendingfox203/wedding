@@ -4,11 +4,11 @@
 
 export const weddingConfig = {
   groom: {
-    fullName: "Lê Duy",
+    fullName: "Le Duy",
     shortName: "Duy",
   },
   bride: {
-    fullName: "Quỳnh Khanh",
+    fullName: "Quynh Khanh",
     shortName: "Khanh",
   },
   // Khớp ảnh Hero Figma: "10th OCTOBER 2026". Giờ tạm để 17:00 — cần xác nhận giờ thật cho CountdownSection.
@@ -32,7 +32,7 @@ export const weddingConfig = {
   // Khớp Page 18 Figma ("The Details" / GEM CENTER).
   venue: {
     name: "GEM CENTER",
-    room: "Ballroom Castor 4",
+    room: "Ballroom Castor",
     address: "8 Nguyen Binh Khiem St., Saigon Ward, Ho Chi Minh City, Vietnam",
     mapUrl: "https://maps.google.com",
   },
@@ -50,9 +50,9 @@ export const weddingConfig = {
   },
   // Khớp Page 5 Figma ("Dresscode" / BLACK ATTIRE).
   dressCode: {
-    heading: "Black Attire",
+    heading: "Black Tie",
     ladiesText:
-      "For Ladies: Champagne, Pink, Muted Green, Brown, or Dark Wine Dresses",
+      "For Ladies: Champagne, Pink, Muted Green, Brown, or Dark Red Dresses",
     gentlemenText: "For Gentlemen: Black Tie Attire",
   },
 
@@ -89,8 +89,8 @@ export const weddingConfig = {
         photo: "/images/timeline-2017-v2.jpg",
       },
       {
-        title: "The Decade · 10.10",
-        text: "Where forever begins.",
+        title: "The Decade · 10.10.2026",
+        text: "The Tea Ceremony marked the moment two families became one.",
         photo: "/images/timeline-2024-v2.jpg",
       },
     ],
@@ -101,7 +101,7 @@ export const weddingConfig = {
     quote:
       "We have shared hundreds of flights and explored countless places, but the greatest destination has always been having each other",
     signatureImage: "/images/gallery-signature.png",
-    photos: ["/images/gallery-1-v2.jpg", "/images/gallery-2-v2.jpg"],
+    photos: ["/images/frame4_p1.webp", "/images/frame4_p2.webp"],
   },
 
   // --- FAQ: nội dung thật từ tài liệu "Duy Khanh Website - FAQ & Registeration Form" ---

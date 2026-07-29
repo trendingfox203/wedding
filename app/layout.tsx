@@ -17,10 +17,16 @@ const script = localFont({
   display: "swap",
 });
 
-// Hero (frame1): "A LOVE STORY" + ngày tháng.
+// Hero (frame1): ngày tháng.
 const velour = localFont({
   src: "./fonts/velourraw-trial-regular.ttf",
   variable: "--font-velour",
+  display: "swap",
+});
+// Hero (frame1): "A Love Story".
+const velourLight = localFont({
+  src: "./fonts/velourraw-trial-light.ttf",
+  variable: "--font-velour-light",
   display: "swap",
 });
 
@@ -28,6 +34,18 @@ const velour = localFont({
 const parfumerie = localFont({
   src: "./fonts/ParfumerieScriptText.otf",
   variable: "--font-parfumerie",
+  display: "swap",
+});
+// Hero (frame1): dấu "&" trong "Duy & Khanh".
+const parfumerieOldStyle = localFont({
+  src: "./fonts/ParfumerieScriptOldStyle.otf",
+  variable: "--font-parfumerie-old",
+  display: "swap",
+});
+// Hero (frame1): "With love".
+const parfumerieRegular = localFont({
+  src: "./fonts/ParfumerieScriptRegular.otf",
+  variable: "--font-parfumerie-regular",
   display: "swap",
 });
 const gtDisplay = localFont({
@@ -55,7 +73,11 @@ const valencia = localFont({
   variable: "--font-valencia",
   display: "swap",
 });
-
+const valenciaLight = localFont({
+  src: "./fonts/Valencia-Light Regular.ttf",
+  variable: "--font-valenciaLight",
+  display: "swap",
+});
 const body = Jost({
   variable: "--font-body",
   subsets: ["latin"],
@@ -77,7 +99,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${script.variable} ${velour.variable} ${parfumerie.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full antialiased`}
+      className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
     </html>
