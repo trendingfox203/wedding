@@ -18,6 +18,15 @@ const SLIDE_LOCK_MS = 800;
 // Same idea but for an in-place milestone-set switch inside Timeline, which
 // only runs a 0.4s crossfade rather than a scroll animation.
 const STEP_LOCK_MS = 550;
+// macOS trackpads/mice report wheel input as a long stream of momentum
+// events that keeps firing well past SLIDE_LOCK_MS — often 1-2s+ for one
+// physical swipe. A fixed-duration lock alone lets the tail end of that
+// same swipe slip through once the lock expires and trigger a second
+// advance ("scrolls twice"). Instead, once a swipe has advanced a slide,
+// every wheel event is absorbed until GESTURE_IDLE_MS passes with no wheel
+// events at all — i.e. the physical gesture has actually stopped — before
+// a new one is allowed to trigger the next advance.
+const GESTURE_IDLE_MS = 180;
 
 const WHEEL_THRESHOLD = 2;
 const SWIPE_THRESHOLD_PX = 40;
@@ -47,6 +56,8 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
   const lockedRef = useRef(false);
   const touchStartYRef = useRef<number | null>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
+  const wheelGestureActiveRef = useRef(false);
+  const wheelGestureIdleTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("main section"));
@@ -149,8 +160,22 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       goTo(idx, true);
     }
 
+    function armGestureIdleTimer() {
+      if (wheelGestureIdleTimerRef.current !== null) {
+        window.clearTimeout(wheelGestureIdleTimerRef.current);
+      }
+      wheelGestureIdleTimerRef.current = window.setTimeout(() => {
+        wheelGestureActiveRef.current = false;
+        wheelGestureIdleTimerRef.current = null;
+      }, GESTURE_IDLE_MS);
+    }
+
     function onWheel(e: WheelEvent) {
-      if (lockedRef.current) {
+      // Any wheel event — trigger, lock tail, or macOS momentum tail —
+      // pushes the "gesture still going" window out further.
+      armGestureIdleTimer();
+
+      if (lockedRef.current || wheelGestureActiveRef.current) {
         e.preventDefault();
         return;
       }
@@ -158,6 +183,7 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       const down = e.deltaY > 0;
       if (classifyIntent(down) === "native") return;
       e.preventDefault();
+      wheelGestureActiveRef.current = true;
       advance(down);
     }
 
@@ -222,6 +248,9 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("click", onClick);
+      if (wheelGestureIdleTimerRef.current !== null) {
+        window.clearTimeout(wheelGestureIdleTimerRef.current);
+      }
     };
   }, [timelineRef]);
 }
