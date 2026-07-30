@@ -18,7 +18,7 @@ export function DressCodeSection() {
       <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-6 text-center">
         <Reveal className="flex flex-col items-center gap-2">
           <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Dresscode</h2>
-          <h3 className="font-velour mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
+          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
             {dressCode.heading}
           </h3>
         </Reveal>

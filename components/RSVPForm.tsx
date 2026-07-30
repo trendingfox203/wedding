@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { weddingConfig } from "@/lib/wedding-config";
 import { Reveal } from "./Reveal";
@@ -80,37 +81,55 @@ export function RSVPForm() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-screen w-full min-h-[1350px] overflow-hidden" aria-hidden>
         <Image src="/images/rsvp-illustration.webp" alt="" fill className="object-cover" />
       </div>
-      {state === "success" && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
-        >
-          <div className="relative w-full max-w-lg overflow-hidden rounded-sm shadow-2xl">
-            <button
-              type="button"
-              onClick={() => setState("idle")}
-              aria-label="Close"
-              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-xl leading-none text-ink transition-colors hover:bg-black/20"
+      <AnimatePresence>
+        {state === "success" && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setState("idle");
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 24 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-lg overflow-hidden rounded-lg shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
             >
-              ×
-            </button>
-            <div className="relative aspect-[1702/1042] w-full">
-              <Image
-                src={attending === "Joyfully accepts" ? "/images/rsvp-thanks-yes.webp" : "/images/rsvp-thanks-no.webp"}
-                alt={`${message.heading} ${message.subheading}`}
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+              <button
+                type="button"
+                onClick={() => setState("idle")}
+                aria-label="Close"
+                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-xl leading-none text-ink transition-all duration-200 hover:scale-110 hover:bg-black/20"
+              >
+                ×
+              </button>
+              <div className="relative aspect-[1702/1042] w-full">
+                <Image
+                  src={attending === "Joyfully accepts" ? "/images/rsvp-thanks-yes.webp" : "/images/rsvp-thanks-no.webp"}
+                  alt={`${message.heading} ${message.subheading}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="relative mx-auto max-w-2xl px-6">
         <Reveal className="mb-12 flex flex-col items-center gap-2 text-center">
           <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Kindly</h2>
-          <h3 className="font-velour mt-2 text-4xl uppercase tracking-wide sm:text-5xl">RSVP</h3>
+          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">RSVP</h3>
+          <p className="font-velour text-center text-sm text-cream">
+            Please kindly RSVP before September 15th, 2026
+          </p>
         </Reveal>
 
         <Reveal>

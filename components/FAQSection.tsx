@@ -33,7 +33,7 @@ export function FAQSection() {
       <div className="relative mx-auto w-full max-w-3xl px-6">
         <Reveal className="mb-12 flex flex-col items-center gap-2 text-center">
           <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Frequently Asked</h2>
-          <h3 className="font-velour mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
+          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
             Questions
           </h3>
         </Reveal>

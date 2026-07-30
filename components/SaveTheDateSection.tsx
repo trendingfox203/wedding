@@ -34,7 +34,7 @@ export function SaveTheDateSection() {
 
   return (
     <section className="relative flex min-h-screen items-end overflow-hidden py-20">
-      <div className="absolute inset-0 bg-ink/70" />
+      <div className="absolute inset-0 bg-ink/80" />
 
       <div
         className="relative mx-auto flex flex-col items-center gap-6 px-6"
@@ -42,16 +42,16 @@ export function SaveTheDateSection() {
       >
         <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
           <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pt-10 pb-4">
-            <div className="flex justify-center items-center gap-6 sm:gap-10">
+          <div className="absolute inset-x-0 bottom-0 pt-10 pb-6 ">
+            <div className="flex justify-center items-center gap-6 sm:gap-6">
               {units.map((unit, i) => (
                 <Fragment key={unit.label}>
-                  {i > 0 && <div className="h-8 w-0.5 bg-cream/70 sm:h-10" />}
+                  {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
                   <div className="flex flex-col items-center">
                     <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
                       {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                     </span>
-                    <span className="font-milton leading-none text-4xl text-cream/90 sm:text-2xl">
+                    <span className="font-milton text-white leading-none text-4xl text-cream/90 sm:text-2xl">
                       {unit.label}
                     </span>
                   </div>

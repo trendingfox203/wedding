@@ -15,7 +15,7 @@ export function GallerySection() {
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-16">
-      <div className="absolute inset-0 bg-ink/70" />
+      <div className="absolute inset-0 bg-ink/80" />
 
       <div className="relative mx-auto flex w-full max-w-4xl items-center px-4">
         {count > 1 && (
@@ -36,7 +36,7 @@ export function GallerySection() {
                 center with the quote trailing close behind it (~1 line
                 gap), instead of pinning the quote to the frame's bottom
                 edge (which put a big empty gap between photo and text). */}
-            <div className="flex w-[55%] flex-col items-start gap-4">
+            <div className="flex mt-24 w-[55%] flex-col items-start gap-4">
               <div className="relative aspect-[8/9] w-full overflow-hidden">
                 <Image
                   src={gallery.photos[0]}

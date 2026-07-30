@@ -12,7 +12,7 @@ export function DetailsSection() {
       <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-3 px-6 text-center">
         <Reveal className="flex flex-col items-center gap-2">
           <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">The Details</h2>
-          <h3 className="font-velour mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
+          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
             {venue.name}
           </h3>
           <p className="font-velour mt-4 text-base">{venue.room}</p>
@@ -31,7 +31,7 @@ export function DetailsSection() {
             <div key={item.label} className="flex items-start gap-10 sm:gap-6">
               <div className="flex flex-col items-center gap-3">
                 <p className="text-2xl sm:text-3xl">{item.time}</p>
-                <p className="text-xs uppercase tracking-[0.3em] text-cream">
+                <p className="text-lg tracking-normal uppercase text-cream">
                   {item.label}
                 </p>
               </div>

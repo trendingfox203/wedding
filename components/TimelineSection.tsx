@@ -135,7 +135,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream sm:py-8">
-      <div className="absolute inset-0 bg-ink/70" />
+      <div className="absolute inset-0 bg-ink/80" />
       <div className="relative mx-auto max-w-3xl px-6">
         {/* Mobile: single sequential column, heading on top */}
         <div className="flex flex-col gap-10 sm:hidden">
@@ -166,7 +166,23 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
             height with no scroll. Scrolling/swiping while this section is in
             view crossfades between the past/future milestone sets before
             letting the page scroll on to the next section. */}
-        <div className="hidden sm:flex" style={{ columnGap: s(41) }}>
+        {/* Fixed width AND height instead of shrink-to-fit. This row sits
+            inside a `mx-auto` + `items-center` centered parent, so if its
+            own box size changed between the past/future sets — item2's text
+            box is wider for the future set (avoids a 3rd line), and the
+            past set's "Different cities..." wraps to 3 lines where the
+            future set's equivalent text only needs 2 — the centered parent
+            shifts too, visibly nudging "A decade of us" and everything else
+            sideways/up-down when toggling. Width is the widest possible left
+            column [390] + gap [41] + widest possible right column [291];
+            height is tall enough for the tallest combination of text/photo
+            in either set (measured live). Constant box size keeps the whole
+            row (and its centering) pinned regardless of which set is
+            showing. */}
+        <div
+          className="hidden sm:flex"
+          style={{ columnGap: s(41), width: s(390 + 41 + 291), height: s(910) }}
+        >
           <div className="flex flex-col items-start">
             <Heading fontSize={s(118)} />
             <AnimatePresence mode="wait">
@@ -192,7 +208,18 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
                   height={s(295)}
                   className="mb-[67px]"
                 />
-                <TextBlock item={item2} delay={0.2} width={s(328)} fontSize={s(26)} />
+                {/* Only the future set's item2 text ("The Tea Ceremony marked...")
+                    needs the wider box to avoid a 3rd line — widening it for
+                    both sets made this the left column's widest child even
+                    for the past set, shifting the whole column (and thus the
+                    right column next to it) even though the past text still
+                    only used 2 lines either way. */}
+                <TextBlock
+                  item={item2}
+                  delay={0.2}
+                  width={showFuture ? s(390) : s(328)}
+                  fontSize={s(26)}
+                />
               </motion.div>
             </AnimatePresence>
           </div>

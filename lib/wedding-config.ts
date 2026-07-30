@@ -37,9 +37,9 @@ export const weddingConfig = {
     mapUrl: "https://maps.google.com",
   },
   schedule: [
-    { time: "6:00 PM", label: "Guest Arrival" },
+    { time: "5:30 PM", label: "Guest Arrival" },
     { time: "6:30 PM", label: "Ceremony" },
-    { time: "7:00 PM", label: "Reception" },
+    { time: "7:30 PM", label: "Reception" },
   ],
   story: {
     heading: "A Love Story",
@@ -57,41 +57,41 @@ export const weddingConfig = {
   },
 
   // --- Timeline "A decade of us": khớp frame3 (quá khứ) + Component 14 (tương lai) trong Figma.
-  // Click để chuyển giữa 2 trạng thái, dùng chung 3 ảnh.
+  // Click để chuyển giữa 2 trạng thái. 6 ảnh riêng biệt (frame3_p1..p6).
   timeline: {
     heading: "A decade of us",
     past: [
       {
         title: "2015 · Singapore",
         text: "Where our paths first crossed.",
-        photo: "/images/timeline-2015-v2.jpg",
+        photo: "/images/frame3_p1.webp",
       },
       {
         title: "2017 · Long distance love",
         text: "Different cities. Different time zones. Always one destination.",
-        photo: "/images/timeline-2017-v2.jpg",
+        photo: "/images/frame3_p2.webp",
       },
       {
         title: "2024 · Barcelona",
         text: "A new city. A new chapter. Pursuing our MBA together.",
-        photo: "/images/timeline-2024-v2.jpg",
+        photo: "/images/frame3_p3.webp",
       },
     ],
     future: [
       {
         title: "The Proposal",
         text: "One unforgettable “Yes.”",
-        photo: "/images/timeline-2015-v2.jpg",
+        photo: "/images/frame3_p4.webp",
       },
       {
         title: "30.04.2026",
         text: "Tea Ceremony — our two families became one.",
-        photo: "/images/timeline-2017-v2.jpg",
+        photo: "/images/frame3_p5.webp",
       },
       {
         title: "The Decade · 10.10.2026",
         text: "The Tea Ceremony marked the moment two families became one.",
-        photo: "/images/timeline-2024-v2.jpg",
+        photo: "/images/frame3_p6.webp",
       },
     ],
   },
