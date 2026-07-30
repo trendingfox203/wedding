@@ -78,10 +78,10 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
 
               <div className="relative w-full max-w-xs">
                 <Image
-                  src="/images/dresscode-swatches.png"
+                  src="/images/dresscode-swatches-v2.webp"
                   alt="Dress code fabric swatches"
-                  width={412}
-                  height={82}
+                  width={1200}
+                  height={221}
                   className="h-auto w-full"
                 />
               </div>

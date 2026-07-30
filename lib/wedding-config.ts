@@ -19,7 +19,7 @@ export const weddingConfig = {
     month: "October",
     year: "2026",
   },
-  tagline: "With love",
+  tagline: "With love,",
   greeting: "Gia đình và bạn thân mến",
   openInvitationLabel: "Open Invitation",
   saveTheDateLabel: "Save the Date",

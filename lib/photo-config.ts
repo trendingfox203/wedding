@@ -12,8 +12,8 @@ export const photoConfigs: Record<string, PhotoConfig> = {
   "gallery-03.webp": { objectPosition: "center 80%" },
   "gallery-04.webp": { objectPosition: "bottom" },
   "gallery-05.webp": { 
-    objectPosition: "center -100%", 
-    transform: 'scale(1.8) translateX(20px)',
+    objectPosition: "center -65%", 
+    transform: 'scale(1.5) translateX(32px)',
     transformOrigin: "bottom" // <-- Rất quan trọng để khi zoom ảnh không bị lệch tâm
   },
   "gallery-06.webp": { objectPosition: "bottom" },
