@@ -83,8 +83,13 @@ export function SaveTheDateSection() {
                 font-size the text is given. */}
             <div className="relative aspect-[695/646] bg-white">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden px-2 text-center text-black">
-                <p className="font-milton text-4xl sm:text-5xl leading-[0.8]">The</p>
-                <p className="font-velour-light text-2xl sm:text-3xl tracking-[0.15em]">DECADE</p>
+                <p
+                  className="font-milton text-5xl sm:text-6xl leading-[0.8] tracking-[-1px]"
+                  style={{ WebkitTextStroke: '0.1px #000' }}
+                >
+                  The
+                </p>
+                <p className="font-velour-light text-2xl sm:text-3xl tracking-normal">DECADE</p>
                 <p className="font-velour-light text-xl sm:text-2xl tracking-normal">10.10</p>
               </div>
             </div>

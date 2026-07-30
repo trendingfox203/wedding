@@ -23,15 +23,21 @@ const SLIDE_LOCK_MS = 800;
 // Same idea but for an in-place milestone-set switch inside Timeline, which
 // only runs a 0.4s crossfade rather than a scroll animation.
 const STEP_LOCK_MS = 550;
-// macOS trackpads/mice report wheel input as a long stream of momentum
-// events that keeps firing well past SLIDE_LOCK_MS — often 1-2s+ for one
-// physical swipe. A fixed-duration lock alone lets the tail end of that
-// same swipe slip through once the lock expires and trigger a second
-// advance ("scrolls twice"). Instead, once a swipe has advanced a slide,
-// every wheel event is absorbed until GESTURE_IDLE_MS passes with no wheel
-// events at all — i.e. the physical gesture has actually stopped — before
-// a new one is allowed to trigger the next advance.
-const GESTURE_IDLE_MS = 180;
+// Touchpads/trackpads (Windows precision touchpads and macOS alike) report
+// wheel input as a long stream of momentum events that keeps firing well
+// past SLIDE_LOCK_MS — often 1-2s+ for one physical swipe, and the gaps
+// between individual events widen as the momentum decays near the end of
+// that tail. A fixed-duration lock alone lets the tail end of that same
+// swipe slip through once the lock expires and trigger a second advance
+// ("jumps two slides"). Instead, once a swipe has advanced a slide, every
+// wheel event is absorbed until GESTURE_IDLE_MS passes with no wheel events
+// at all — i.e. the physical gesture has actually stopped — before a new
+// one is allowed to trigger the next advance. 180ms turned out too tight
+// for real touchpad hardware (the widening tail gaps exceed it before the
+// swipe has truly ended, letting the tail re-trigger); 450ms gives enough
+// headroom for that decay while still being much shorter than the pause
+// between two genuinely separate swipes.
+const GESTURE_IDLE_MS = 450;
 
 const WHEEL_THRESHOLD = 2;
 const SWIPE_THRESHOLD_PX = 40;
@@ -209,18 +215,24 @@ export function useSlideNavigation(
     }
 
     function onWheel(e: WheelEvent) {
-      // Any wheel event — trigger, lock tail, or macOS momentum tail —
-      // pushes the "gesture still going" window out further.
+      // Any wheel event — trigger, lock tail, or momentum tail — pushes the
+      // "gesture still going" window out further.
       armGestureIdleTimer();
 
       if (lockedRef.current || wheelGestureActiveRef.current) {
         e.preventDefault();
         return;
       }
-      if (Math.abs(e.deltaY) < WHEEL_THRESHOLD) return;
       const down = e.deltaY > 0;
       if (classifyIntent(down) === "native") return;
+      // Past this point the section advances by slide, not native scroll —
+      // prevent every event unconditionally (even one below WHEEL_THRESHOLD)
+      // so the page can't sneak a couple pixels of native scroll in right
+      // before our custom animation takes over. Touchpads report many tiny
+      // deltas at the start of a swipe before the "real" motion; letting
+      // those leak through natively is what reads as a stutter/jerk.
       e.preventDefault();
+      if (Math.abs(e.deltaY) < WHEEL_THRESHOLD) return;
       wheelGestureActiveRef.current = true;
       advance(down);
     }
