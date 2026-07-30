@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { weddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
+import { playBackgroundMusic } from "@/lib/backgroundMusic";
 
 export function HeroSection() {
   const { groom, bride, tagline, openInvitationLabel } = weddingConfig;
@@ -56,6 +59,7 @@ export function HeroSection() {
 
         <a
           href="#open-invitation"
+          onClick={playBackgroundMusic}
           className="mb-[3vh] transition-transform hover:scale-105"
           style={{ width: "clamp(200px, 19.06vw, 400px)" }}
         >
