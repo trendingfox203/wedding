@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
 import { getPhotoConfig } from "@/lib/photo-config";
 
 const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
+
+// Full inline style from a photo's config — objectFit/objectPosition plus
+// an optional transform/transformOrigin (e.g. a zoom-in crop that plain
+// object-position can't express) for photos that need it.
+function photoStyle(src: string): CSSProperties {
+  const cfg = getPhotoConfig(src);
+  return {
+    objectFit: cfg.objectFit,
+    objectPosition: cfg.objectPosition,
+    transform: cfg.transform,
+    transformOrigin: cfg.transformOrigin,
+  };
+}
 
 export function GallerySection() {
   const { gallery, groom, bride } = weddingConfig;
@@ -68,7 +81,7 @@ export function GallerySection() {
                       src={gallery.photos[0]}
                       alt={`${groom.fullName} & ${bride.fullName}`}
                       fill
-                      style={{ objectFit: getPhotoConfig(gallery.photos[0]).objectFit, objectPosition: getPhotoConfig(gallery.photos[0]).objectPosition }}
+                      style={photoStyle(gallery.photos[0])}
                     />
                   </div>
                   <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
@@ -98,7 +111,7 @@ export function GallerySection() {
                     src={leftPhoto}
                     alt=""
                     fill
-                    style={{ objectFit: getPhotoConfig(leftPhoto).objectFit, objectPosition: getPhotoConfig(leftPhoto).objectPosition }}
+                    style={photoStyle(leftPhoto)}
                   />
                 )}
               </motion.div>
@@ -120,7 +133,7 @@ export function GallerySection() {
                     src={rightPhoto}
                     alt=""
                     fill
-                    style={{ objectFit: getPhotoConfig(rightPhoto).objectFit, objectPosition: getPhotoConfig(rightPhoto).objectPosition }}
+                    style={photoStyle(rightPhoto)}
                   />
                 </motion.div>
               )}
