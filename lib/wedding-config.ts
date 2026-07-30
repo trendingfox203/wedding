@@ -118,10 +118,6 @@ export const weddingConfig = {
       "/images/gallery-12.webp",
       "/images/gallery-13.webp",
       "/images/gallery-14.webp",
-      "/images/gallery-15.webp",
-      "/images/gallery-16.webp",
-      "/images/gallery-17.webp",
-      "/images/gallery-18.webp",
     ],
   },
 
