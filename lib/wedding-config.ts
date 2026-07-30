@@ -84,8 +84,8 @@ export const weddingConfig = {
         photo: "/images/frame3_p4.webp",
       },
       {
-        title: "30.04.2026",
-        text: "Tea Ceremony — our two families became one.",
+        title: "Tea Ceremony · 30.04.2026",
+        text: "Our two families became one.",
         photo: "/images/frame3_p5.webp",
       },
       {

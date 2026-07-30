@@ -90,7 +90,7 @@ export function SaveTheDateSection() {
                   The
                 </p>
                 <p className="font-velour-light text-2xl sm:text-3xl tracking-normal">DECADE</p>
-                <p className="font-velour-light text-xl sm:text-2xl tracking-normal">10.10</p>
+                <p className="font-velour-light text-lg sm:text-xl tracking-normal">10.10</p>
               </div>
             </div>
             <div className="relative aspect-[695/646] w-full overflow-hidden">
