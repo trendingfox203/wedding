@@ -107,7 +107,7 @@ export function SaveTheDateSection() {
                   <Fragment key={unit.label}>
                     {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
                     <div className="flex flex-col items-center">
-                      <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
+                      <span className="font-valencia text-2xl text-white tabular-nums sm:text-3xl">
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
                       <span
