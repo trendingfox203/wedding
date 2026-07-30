@@ -39,7 +39,7 @@ export function GallerySection() {
             type="button"
             onClick={prev}
             aria-label="Previous photo"
-            className="mr-2 shrink-0 text-3xl text-cream/80 hover:text-cream sm:mr-4"
+            className="mr-2 text-[#878787] z-5 absolute ml-[10px] shrink-0 text-4xl  hover:text-cream sm:mr-4"
           >
             ‹
           </button>
@@ -120,7 +120,7 @@ export function GallerySection() {
             type="button"
             onClick={next}
             aria-label="Next photo"
-            className="ml-2 shrink-0 text-3xl text-cream/80 hover:text-cream sm:ml-4"
+            className="ml-2 absolute right-0 mr-[24px] shrink-0 text-4xl text-cream/80 hover:text-cream sm:ml-4"
           >
             ›
           </button>

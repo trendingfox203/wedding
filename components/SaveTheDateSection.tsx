@@ -49,7 +49,7 @@ export function SaveTheDateSection() {
           <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
             <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
             <div className="absolute inset-x-0 bottom-0 pt-10 pb-6 ">
-              <div className="flex justify-center items-center gap-6 sm:gap-6">
+              <div className="flex justify-center items-center gap-5 sm:gap-5">
                 {units.map((unit, i) => (
                   <Fragment key={unit.label}>
                     {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
@@ -57,7 +57,7 @@ export function SaveTheDateSection() {
                       <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
-                      <span className="font-milton text-white leading-none text-4xl text-cream/90 sm:text-2xl">
+                      <span className="font-milton stroke-3 text-white leading-none text-2xl text-cream/90 sm:text-3xl">
                         {unit.label}
                       </span>
                     </div>
