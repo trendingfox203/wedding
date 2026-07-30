@@ -1,8 +1,9 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import { weddingConfig } from "@/lib/wedding-config";
+import { isAndroid, isIOS, isInAppBrowser } from "@/lib/inAppBrowser";
 
 function getTimeLeft(target: number) {
   const diff = Math.max(0, target - Date.now());
@@ -17,12 +18,38 @@ function getTimeLeft(target: number) {
 export function SaveTheDateSection() {
   const target = new Date(weddingConfig.weddingDateISO).getTime();
   const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getTimeLeft> | null>(null);
+  const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
 
   useEffect(() => {
     setTimeLeft(getTimeLeft(target));
     const id = setInterval(() => setTimeLeft(getTimeLeft(target)), 1000);
     return () => clearInterval(id);
   }, [target]);
+
+  // In-app browsers (Zalo, Messenger, Facebook, ...) run a locked-down
+  // WebView that can't download files or hand off to the Calendar app —
+  // that's an app-level restriction, nothing our page's code can change.
+  // The one escape hatch: Android lets a page navigate to an `intent://`
+  // URL, which the OS resolves outside the WebView entirely, landing the
+  // user in their actual default browser where the download works
+  // normally. iOS has no equivalent — a WKWebView can't be told to hand
+  // off to Safari — so there we just point the user at the "..." menu
+  // these apps already provide for exactly this.
+  function handleCalendarClick(e: MouseEvent<HTMLAnchorElement>) {
+    if (!isInAppBrowser()) return;
+
+    if (isAndroid()) {
+      e.preventDefault();
+      const icsUrl = new URL("/calendar.ics", window.location.href);
+      window.location.href = `intent://${icsUrl.host}${icsUrl.pathname}#Intent;scheme=https;end`;
+      return;
+    }
+
+    if (isIOS()) {
+      e.preventDefault();
+      setShowOpenInBrowserHint(true);
+    }
+  }
 
   const units = [
     { label: "Days", value: timeLeft?.days },
@@ -104,6 +131,7 @@ export function SaveTheDateSection() {
 
           <a
             href="/calendar.ics"
+            onClick={handleCalendarClick}
             aria-label="Add wedding day to calendar"
             className="relative w-56 transition-transform hover:scale-105 sm:w-64"
           >
@@ -115,6 +143,12 @@ export function SaveTheDateSection() {
               className="h-auto w-full"
             />
           </a>
+
+          {showOpenInBrowserHint && (
+            <p className="font-velour mt-3 max-w-xs text-center text-sm text-cream">
+              Vui lòng nhấn biểu tượng ⋯ (hoặc chia sẻ) ở góc màn hình và chọn &quot;Mở bằng trình duyệt&quot; để lưu vào Lịch.
+            </p>
+          )}
         </div>
       </div>
     </section>

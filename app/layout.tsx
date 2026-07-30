@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Jost } from "next/font/google";
 import localFont from "next/font/local";
 import { weddingConfig } from "@/lib/wedding-config";
+import { InAppBrowserRedirect } from "@/components/InAppBrowserRedirect";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -101,7 +102,10 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
+      <body className="min-h-full flex flex-col bg-cream text-ink">
+        <InAppBrowserRedirect />
+        {children}
+      </body>
     </html>
   );
 }
