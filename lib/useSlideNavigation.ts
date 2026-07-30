@@ -2,10 +2,15 @@
 
 import { useEffect, useRef, type RefObject } from "react";
 import type { TimelineHandle } from "@/components/TimelineSection";
+import type { DetailsHandle } from "@/components/DetailsSection";
 
 // Index of the Timeline section among `document.querySelectorAll("main section")`,
 // fixed by the section order in app/page.tsx (Hero, SaveTheDate, Timeline, ...).
 const TIMELINE_INDEX = 2;
+// Details/Dresscode combined section — same sub-step mechanism as Timeline
+// (see DetailsSection.tsx). Fixed by section order: Hero, SaveTheDate,
+// Timeline, Gallery, Details(+Dresscode), ...
+const DETAILS_INDEX = 4;
 
 // Perceived speed of a slide-to-slide jump. Custom rAF tween instead of the
 // browser's built-in `behavior: "smooth"` — its duration/easing vary by
@@ -49,15 +54,25 @@ function easeInOutCubic(t: number) {
  *
  * Timeline is a single slide with its own past/future sub-step: scrolling
  * into/through it first tries `timelineRef.current.tryAdvance` before
- * moving on to the next/previous slide.
+ * moving on to the next/previous slide. Details/Dresscode work the same way
+ * via `detailsRef`.
  */
-export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>) {
+export function useSlideNavigation(
+  timelineRef: RefObject<TimelineHandle | null>,
+  detailsRef: RefObject<DetailsHandle | null>,
+) {
   const indexRef = useRef(0);
   const lockedRef = useRef(false);
   const touchStartYRef = useRef<number | null>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
   const wheelGestureActiveRef = useRef(false);
   const wheelGestureIdleTimerRef = useRef<number | null>(null);
+  // Gate: on a fresh load landing on Hero, nothing can scroll past it until
+  // "Open Invitation" is clicked. `openedRef` tracks whether that's happened;
+  // while it's false and we're still on Hero, every input path (wheel,
+  // touch, keydown, and native scroll via the html/body overflow lock below)
+  // is blocked outright instead of advancing.
+  const openedRef = useRef(false);
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("main section"));
@@ -77,6 +92,19 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       }
     });
     indexRef.current = closest;
+    // Only gate a genuine fresh landing on Hero. If the page loaded already
+    // scrolled past it (deep link, scroll restoration), treat the
+    // invitation as already "opened" so that content stays reachable.
+    openedRef.current = closest !== 0;
+    if (!openedRef.current) {
+      document.documentElement.style.overflow = "hidden";
+    }
+
+    function unlockGate() {
+      if (openedRef.current) return;
+      openedRef.current = true;
+      document.documentElement.style.overflow = "";
+    }
 
     function edgeState(el: HTMLElement) {
       const rect = el.getBoundingClientRect();
@@ -127,24 +155,34 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       requestAnimationFrame(step);
     }
 
+    function trySubStep(idx: number, down: boolean): boolean {
+      const handle = idx === TIMELINE_INDEX ? timelineRef.current : idx === DETAILS_INDEX ? detailsRef.current : null;
+      const handled = handle?.tryAdvance(down) ?? false;
+      if (handled) {
+        lockedRef.current = true;
+        window.setTimeout(() => {
+          lockedRef.current = false;
+        }, STEP_LOCK_MS);
+      }
+      return handled;
+    }
+
+    function enterSubStep(idx: number, fromTop: boolean) {
+      const handle = idx === TIMELINE_INDEX ? timelineRef.current : idx === DETAILS_INDEX ? detailsRef.current : null;
+      if (!handle) return;
+      if (fromTop) handle.enterFromTop();
+      else handle.enterFromBottom();
+    }
+
     function advance(down: boolean) {
       const idx = indexRef.current;
-      if (idx === TIMELINE_INDEX) {
-        const handled = timelineRef.current?.tryAdvance(down) ?? false;
-        if (handled) {
-          lockedRef.current = true;
-          window.setTimeout(() => {
-            lockedRef.current = false;
-          }, STEP_LOCK_MS);
-          return;
-        }
-      }
+      if (down && idx === 0 && !openedRef.current) return;
+      if ((idx === TIMELINE_INDEX || idx === DETAILS_INDEX) && trySubStep(idx, down)) return;
       const nextIdx = down ? idx + 1 : idx - 1;
       if (nextIdx < 0 || nextIdx >= sectionsRef.current.length) return;
       indexRef.current = nextIdx;
-      if (nextIdx === TIMELINE_INDEX) {
-        if (down) timelineRef.current?.enterFromTop();
-        else timelineRef.current?.enterFromBottom();
+      if (nextIdx === TIMELINE_INDEX || nextIdx === DETAILS_INDEX) {
+        enterSubStep(nextIdx, down);
       }
       goTo(nextIdx, down);
     }
@@ -156,7 +194,7 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       const idx = sectionsRef.current.indexOf(el as HTMLElement);
       if (idx === -1) return;
       indexRef.current = idx;
-      if (idx === TIMELINE_INDEX) timelineRef.current?.enterFromTop();
+      if (idx === TIMELINE_INDEX || idx === DETAILS_INDEX) enterSubStep(idx, true);
       goTo(idx, true);
     }
 
@@ -226,14 +264,22 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       }
     }
 
-    // Generic same-page anchor jump (e.g. Hero's "Open Invitation" -> #story)
-    // routed through the slide controller instead of native anchor scroll.
+    // Generic same-page anchor jump routed through the slide controller
+    // instead of native anchor scroll. Hero's "Open Invitation" uses the
+    // reserved id "open-invitation" (no matching element — it's a sentinel,
+    // not a real jump target): clicking it unlocks the gate and advances
+    // exactly one slide, same as any other forward gesture.
     function onClick(e: MouseEvent) {
       const anchor = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null;
       if (!anchor) return;
       const id = anchor.getAttribute("href")?.slice(1);
       if (!id) return;
       e.preventDefault();
+      if (id === "open-invitation") {
+        unlockGate();
+        advance(true);
+        return;
+      }
       jumpToId(id);
     }
 
@@ -251,6 +297,7 @@ export function useSlideNavigation(timelineRef: RefObject<TimelineHandle | null>
       if (wheelGestureIdleTimerRef.current !== null) {
         window.clearTimeout(wheelGestureIdleTimerRef.current);
       }
+      document.documentElement.style.overflow = "";
     };
-  }, [timelineRef]);
+  }, [timelineRef, detailsRef]);
 }

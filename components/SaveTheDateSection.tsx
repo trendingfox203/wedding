@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
-import { weddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
+import { weddingConfig } from "@/lib/wedding-config";
 
 function getTimeLeft(target: number) {
   const diff = Math.max(0, target - Date.now());
@@ -15,7 +15,6 @@ function getTimeLeft(target: number) {
 }
 
 export function SaveTheDateSection() {
-  const { groom, bride } = weddingConfig;
   const target = new Date(weddingConfig.weddingDateISO).getTime();
   const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getTimeLeft> | null>(null);
 
@@ -34,10 +33,10 @@ export function SaveTheDateSection() {
 
   return (
     <section className="relative flex min-h-screen items-end overflow-hidden py-20">
-      <div className="absolute inset-0 bg-ink/80" />
+      <div className="absolute inset-0 bg-ink/70" />
 
       <div
-        className="relative mx-auto flex flex-col items-center gap-6 px-6"
+        className="relative mx-auto flex flex-col items-center gap-12 px-6"
         style={{ width: "clamp(320px, 36.2vw, 696px)" }}
       >
         {/* Countdown photo and the date-card/hand-photo row are now one
@@ -57,7 +56,13 @@ export function SaveTheDateSection() {
                       <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
-                      <span className="font-milton stroke-3 text-white leading-none text-2xl text-cream/90 sm:text-3xl">
+                      <span
+                        className="font-milton text-white leading-none text-2xl sm:text-3xl"
+                        style={{
+                          WebkitTextStroke: '0.2px rgb(255,255,2555)',
+
+                        }}
+                      >
                         {unit.label}
                       </span>
                     </div>
@@ -77,13 +82,10 @@ export function SaveTheDateSection() {
                 own size — the aspect-[695/646] box stays fixed no matter what
                 font-size the text is given. */}
             <div className="relative aspect-[695/646] bg-white">
-              <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden px-2 text-center">
-                <p className="font-velour-light text-sm sm:text-base" style={{ color: "#58595b" }}>
-                  {groom.fullName} &amp; {bride.fullName}
-                </p>
-                <p className="font-velour-light text-xs sm:text-sm" style={{ color: "#58595b" }}>
-                  {formatWeddingDateShort()}
-                </p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden px-2 text-center text-black">
+                <p className="font-milton text-5xl sm:text-6xl leading-[0.8]">The</p>
+                <p className="font-gt text-3xl sm:text-4xl tracking-[0.15em]">DECADE</p>
+                <p className="font-valencia text-xl sm:text-2xl tracking-normal">10.10</p>
               </div>
             </div>
             <div className="relative aspect-[695/646] w-full overflow-hidden">
@@ -92,8 +94,8 @@ export function SaveTheDateSection() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <p className="font-parfumerie text-4xl text-white sm:text-5xl">#thedecade1010</p>
+        <div className="flex flex-col items-center ">
+          {/* <p className="font-parfumerie text-4xl text-white sm:text-5xl">#thedecade1010</p> */}
 
           <div className="relative w-56 sm:w-64">
             <Image

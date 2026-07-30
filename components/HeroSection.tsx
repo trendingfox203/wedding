@@ -55,7 +55,7 @@ export function HeroSection() {
         </div>
 
         <a
-          href="#rsvp"
+          href="#open-invitation"
           className="mb-[3vh] transition-transform hover:scale-105"
           style={{ width: "clamp(200px, 19.06vw, 400px)" }}
         >

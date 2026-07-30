@@ -52,8 +52,8 @@ export const weddingConfig = {
   dressCode: {
     heading: "Black Tie",
     ladiesText:
-      "For Ladies: Champagne, Pink, Muted Green, Brown, or Dark Red Dresses",
-    gentlemenText: "For Gentlemen: Black Tie Attire",
+      "Ladies: Cocktail dresses in dusty pink, olive green, taupe, brown, or plum.",
+    gentlemenText: "Gentlemen: Black Tie Attire",
   },
 
   // --- Timeline "A decade of us": khớp frame3 (quá khứ) + Component 14 (tương lai) trong Figma.
@@ -121,16 +121,17 @@ export const weddingConfig = {
       "/images/gallery-15.webp",
       "/images/gallery-16.webp",
       "/images/gallery-17.webp",
+      "/images/gallery-18.webp",
     ],
   },
 
   // --- FAQ: nội dung thật từ tài liệu "Duy Khanh Website - FAQ & Registeration Form" ---
-  rsvpDeadlineDisplay: "30 August 2026",
+  rsvpDeadlineDisplay: "15 September 2026",
   contactEmail: "team@curatedbyaiai.com",
   faqs: [
     {
       question: "When is the RSVP deadline?",
-      answer: "We kindly ask that you RSVP by 30 August 2026.",
+      answer: "We kindly ask that you RSVP by 15 September 2026.",
     },
     {
       question: "May I bring a plus-one?",
@@ -174,7 +175,7 @@ export const weddingConfig = {
     // Web App URL sau khi deploy scripts/apps-script.gs lên Google Apps Script.
     endpoint:
       "https://script.google.com/macros/s/AKfycbyL2t4bWYx1DrJioe7YOK9JizjtfGkscF1I5qKXrkMl9-ASRVzGwOKagybc0WDouPrY/exec",
-    guestCountOptions: [1, 2, 3, 4, 5],
+    guestCountOptions: [1, 2],
     successMessage: {
       heading: "Thank you",
       subheading: "For your RSVP",
@@ -192,7 +193,7 @@ export function formatWeddingDateShort() {
   const date = new Date(weddingConfig.weddingDateISO);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
-  return `${day}/${month}/${date.getFullYear()}`;
+  return `${day}.${month}.${date.getFullYear()}`;
 }
 
 export type WeddingConfig = typeof weddingConfig;

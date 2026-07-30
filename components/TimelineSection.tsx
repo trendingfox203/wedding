@@ -4,7 +4,6 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
-import { Reveal } from "./Reveal";
 
 type TimelineItem = { title: string; text: string; photo: string };
 
@@ -118,9 +117,14 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
     [showFuture],
   );
 
+  // Plain, unanimated — this heading stays on screen the whole time the
+  // section is visible; only the dates/photos below it should carry any
+  // transition effect (the AnimatePresence blocks further down). No mount
+  // or scroll-triggered fade here, so it can't ever flicker or appear to
+  // animate in sync with the past/future switch.
   function Heading({ fontSize }: { fontSize?: number }) {
     return (
-      <Reveal className="text-left">
+      <div className="text-left">
         <button
           type="button"
           onClick={() => setShowFuture((v) => !v)}
@@ -129,13 +133,13 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
         >
           {timeline.heading}
         </button>
-      </Reveal>
+      </div>
     );
   }
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream sm:py-8">
-      <div className="absolute inset-0 bg-ink/80" />
+      <div className="absolute inset-0 bg-ink/70" />
       <div className="relative mx-auto max-w-3xl px-6">
         {/* Mobile: single sequential column, heading on top */}
         <div className="flex flex-col gap-10 sm:hidden">

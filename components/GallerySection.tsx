@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
+import { getPhotoConfig } from "@/lib/photo-config";
 
 const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
 
@@ -31,7 +32,7 @@ export function GallerySection() {
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-16">
-      <div className="absolute inset-0 bg-ink/80" />
+      <div className="absolute inset-0 bg-ink/70" />
 
       <div className="relative mx-auto flex w-full max-w-4xl items-center px-4">
         {pageCount > 1 && (
@@ -67,7 +68,7 @@ export function GallerySection() {
                       src={gallery.photos[0]}
                       alt={`${groom.fullName} & ${bride.fullName}`}
                       fill
-                      className="object-cover"
+                      style={{ objectFit: getPhotoConfig(gallery.photos[0]).objectFit, objectPosition: getPhotoConfig(gallery.photos[0]).objectPosition }}
                     />
                   </div>
                   <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
@@ -92,7 +93,14 @@ export function GallerySection() {
                 transition={fadeTransition}
                 className="relative min-h-[320px] w-full overflow-hidden sm:aspect-[653/785] sm:min-h-0"
               >
-                {leftPhoto && <Image src={leftPhoto} alt="" fill className="object-cover" />}
+                {leftPhoto && (
+                  <Image
+                    src={leftPhoto}
+                    alt=""
+                    fill
+                    style={{ objectFit: getPhotoConfig(leftPhoto).objectFit, objectPosition: getPhotoConfig(leftPhoto).objectPosition }}
+                  />
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -108,7 +116,12 @@ export function GallerySection() {
                   transition={fadeTransition}
                   className="absolute inset-0"
                 >
-                  <Image src={rightPhoto} alt="" fill className="object-cover" />
+                  <Image
+                    src={rightPhoto}
+                    alt=""
+                    fill
+                    style={{ objectFit: getPhotoConfig(rightPhoto).objectFit, objectPosition: getPhotoConfig(rightPhoto).objectPosition }}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
