@@ -113,7 +113,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
                   and the three times clustered together (not spread edge-to-edge)
                   — matched via a Figma export: gap from address ~= 0.93x the
                   address's own width, schedule row itself compact around center. */}
-              <div className="font-velour mt-[170px] flex flex-col items-center gap-10 sm:flex-row sm:gap-2">
+              <div className="font-velour mt-12 flex flex-col items-center gap-10 sm:mt-[170px] sm:flex-row sm:gap-2">
                 {schedule.map((item, i) => (
                   <div key={item.label} className="flex items-start gap-10 sm:gap-6">
                     <div className="flex flex-col items-center gap-3">

@@ -5,9 +5,11 @@ let audio: HTMLAudioElement | null = null;
 
 export function playBackgroundMusic() {
   if (typeof window === "undefined") return;
-  if (!audio) {
-    audio = new Audio("/audio/wedding-music.mp3");
-    audio.loop = true;
-  }
-  void audio.play();
+  
+  // if (!audio) {
+  //   audio = new Audio("/audio/wedding-music.mp3");
+  //   audio.loop = true;
+  // }
+  // void audio.play();
+
 }

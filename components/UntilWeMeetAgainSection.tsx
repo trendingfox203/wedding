@@ -15,6 +15,17 @@ const PHOTO1_RATIO = 519 / 832;
 const PHOTO1 = { width: 364 * PHOTO1_RATIO * SCALE, height: 364 * SCALE, top: 76 * SCALE };
 const PHOTO2 = { width: 432 * SCALE, height: 567 * SCALE };
 const GAP = 55 * SCALE;
+// The two photos used to be positioned with fixed pixel left/width values
+// derived from the constants above. That's fine at desktop width (the
+// outer box is capped at max-w-6xl, well under those pixel values), but on
+// a narrow mobile screen the box shrinks (maxWidth: "100%") while the
+// absolutely-positioned children kept their full desktop pixel size —
+// photo 2 overflowed off the right edge of the viewport. Expressing every
+// child position/size as a % of the box instead makes them scale with
+// whatever width the box actually renders at, at any viewport.
+const TOTAL_WIDTH = PHOTO1.width + GAP + PHOTO2.width;
+const TOTAL_HEIGHT = PHOTO2.height;
+const pct = (n: number, of: number) => `${(n / of) * 100}%`;
 
 export function UntilWeMeetAgainSection() {
   const { closing } = weddingConfig;
@@ -24,7 +35,7 @@ export function UntilWeMeetAgainSection() {
       <Image src="/images/until-we-meet-bg-v3.jpg" alt="" fill className="object-cover grayscale" />
       <div className="absolute inset-0 bg-ink/60" />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-44 px-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 sm:flex-row sm:items-center sm:justify-between sm:gap-44">
         <Reveal className="flex flex-col items-center gap-4 text-center">
           <h2 className="font-velour text-2xl uppercase tracking-[0.25em] sm:text-3xl">
             {closing.heading}
@@ -39,18 +50,28 @@ export function UntilWeMeetAgainSection() {
 
         <Reveal
           delay={0.15}
-          className="relative shrink-0"
-          style={{ width: PHOTO1.width + GAP + PHOTO2.width, height: PHOTO2.height, maxWidth: "100%" }}
+          className="relative w-full shrink-0"
+          style={{ maxWidth: TOTAL_WIDTH, aspectRatio: `${TOTAL_WIDTH} / ${TOTAL_HEIGHT}` }}
         >
           <div
             className="absolute shadow-lg"
-            style={{ left: 0, top: PHOTO1.top, width: PHOTO1.width, height: PHOTO1.height }}
+            style={{
+              left: 0,
+              top: pct(PHOTO1.top, TOTAL_HEIGHT),
+              width: pct(PHOTO1.width, TOTAL_WIDTH),
+              height: pct(PHOTO1.height, TOTAL_HEIGHT),
+            }}
           >
             <Image src="/images/until-we-meet-1-v3.jpg" alt="" fill className="object-contain grayscale" />
           </div>
           <div
             className="absolute shadow-lg"
-            style={{ left: PHOTO1.width + GAP, top: 0, width: PHOTO2.width, height: PHOTO2.height }}
+            style={{
+              left: pct(PHOTO1.width + GAP, TOTAL_WIDTH),
+              top: 0,
+              width: pct(PHOTO2.width, TOTAL_WIDTH),
+              height: "100%",
+            }}
           >
             <Image src="/images/until-we-meet-2-v3.jpg" alt="" fill className="object-contain grayscale" />
           </div>

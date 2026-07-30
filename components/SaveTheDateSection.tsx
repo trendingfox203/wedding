@@ -38,7 +38,11 @@ function buildWeddingICS() {
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
     `UID:duy-khanh-wedding-${start.getTime()}@wedding-invitation`,
-    `DTSTAMP:${toICSDate(new Date())}`,
+    // DTSTAMP just needs to be a valid timestamp per RFC 5545, not
+    // literally "now" — reusing `start` keeps this fully deterministic
+    // (new Date() here would render a different value on the server vs.
+    // the client a moment later, a hydration mismatch on the href).
+    `DTSTAMP:${toICSDate(start)}`,
     `DTSTART:${toICSDate(start)}`,
     `DTEND:${toICSDate(end)}`,
     `SUMMARY:${escapeICSText(title)}`,
@@ -49,29 +53,19 @@ function buildWeddingICS() {
   return lines.join("\r\n");
 }
 
-// iOS Safari opens a `data:text/calendar` URI as its native "Add to
-// Calendar" sheet directly when navigated to — but only without a
-// `download` attribute forcing a file save instead. Android/desktop
-// browsers don't have that inline handoff, so they get the download-a-file
-// fallback (best available there: open the downloaded .ics to add it).
-function addWeddingToCalendar() {
-  const ics = buildWeddingICS();
-  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
-
-  if (isIOS) {
-    window.location.href = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
-    return;
-  }
-
-  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "duy-khanh-wedding.ics";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+// A real, static `<a href="data:text/calendar,...">` — not a `download`
+// blob URL clicked programmatically via JS. The earlier version built a
+// Blob + object URL and fired `.click()` on a detached <a> from inside an
+// onClick handler; several mobile browsers (and most in-app WebViews —
+// Zalo/Messenger/Facebook, which is how a lot of guests will actually open
+// this link) silently refuse that kind of synthetic, script-triggered
+// download/navigation, so tapping the button visibly did nothing. A plain
+// anchor the user taps directly is a real, trusted navigation the OS
+// handles the same way it handles any other calendar/mailto-style link:
+// iOS shows the native "Add to Calendar" sheet inline, Android downloads
+// the .ics for the user to open in Calendar.
+function buildCalendarHref() {
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(buildWeddingICS())}`;
 }
 
 export function SaveTheDateSection() {
@@ -162,9 +156,8 @@ export function SaveTheDateSection() {
         <div className="flex flex-col items-center ">
           {/* <p className="font-parfumerie text-4xl text-white sm:text-5xl">#thedecade1010</p> */}
 
-          <button
-            type="button"
-            onClick={addWeddingToCalendar}
+          <a
+            href={buildCalendarHref()}
             aria-label="Add wedding day to calendar"
             className="relative w-56 transition-transform hover:scale-105 sm:w-64"
           >
@@ -175,7 +168,7 @@ export function SaveTheDateSection() {
               height={152}
               className="h-auto w-full"
             />
-          </button>
+          </a>
         </div>
       </div>
     </section>

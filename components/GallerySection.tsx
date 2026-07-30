@@ -53,7 +53,7 @@ export function GallerySection() {
             type="button"
             onClick={prev}
             aria-label="Previous photo"
-            className="mr-2 text-[#878787] z-5 absolute ml-[10px] shrink-0 text-4xl  hover:text-cream sm:mr-4"
+            className="absolute left-0 z-10 flex h-11 w-11 shrink-0 items-center justify-center text-4xl text-[#878787] hover:text-cream"
           >
             ‹
           </button>
@@ -84,7 +84,7 @@ export function GallerySection() {
                       style={photoStyle(gallery.photos[0])}
                     />
                   </div>
-                  <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
+                  <p className="w-full font-velour text-xs text-justify leading-relaxed sm:text-[10px]">
                     {gallery.quote}
                   </p>
                   <div className="relative aspect-[16/9] w-[78%] self-end">
@@ -146,7 +146,7 @@ export function GallerySection() {
             type="button"
             onClick={next}
             aria-label="Next photo"
-            className="ml-2 absolute right-0 mr-[24px] shrink-0 text-4xl text-cream/80 hover:text-cream sm:ml-4"
+            className="absolute right-0 z-10 flex h-11 w-11 shrink-0 items-center justify-center text-4xl text-cream/80 hover:text-cream"
           >
             ›
           </button>
