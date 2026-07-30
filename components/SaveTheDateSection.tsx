@@ -14,6 +14,66 @@ function getTimeLeft(target: number) {
   };
 }
 
+// RFC 5545 requires CRLF line breaks and backslash-escaped commas/semicolons
+// in text fields — the venue address has both.
+function escapeICSText(text: string) {
+  return text.replace(/([,;])/g, "\\$1");
+}
+
+function buildWeddingICS() {
+  const { groom, bride, venue } = weddingConfig;
+  const start = new Date(weddingConfig.weddingDateISO);
+  // No explicit end time in the source data — block out a reasonable
+  //4-hour window (ceremony through reception) rather than leaving it
+  // open-ended, which some calendar apps render awkwardly.
+  const end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
+  const toICSDate = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const title = `${groom.shortName.toUpperCase()} & ${bride.shortName.toUpperCase()}'S WEDDING DAY`;
+  const location = `${venue.name}, ${venue.address}`;
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Duy & Khanh Wedding//EN",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:duy-khanh-wedding-${start.getTime()}@wedding-invitation`,
+    `DTSTAMP:${toICSDate(new Date())}`,
+    `DTSTART:${toICSDate(start)}`,
+    `DTEND:${toICSDate(end)}`,
+    `SUMMARY:${escapeICSText(title)}`,
+    `LOCATION:${escapeICSText(location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ];
+  return lines.join("\r\n");
+}
+
+// iOS Safari opens a `data:text/calendar` URI as its native "Add to
+// Calendar" sheet directly when navigated to — but only without a
+// `download` attribute forcing a file save instead. Android/desktop
+// browsers don't have that inline handoff, so they get the download-a-file
+// fallback (best available there: open the downloaded .ics to add it).
+function addWeddingToCalendar() {
+  const ics = buildWeddingICS();
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+
+  if (isIOS) {
+    window.location.href = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+    return;
+  }
+
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "duy-khanh-wedding.ics";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function SaveTheDateSection() {
   const target = new Date(weddingConfig.weddingDateISO).getTime();
   const [timeLeft, setTimeLeft] = useState<ReturnType<typeof getTimeLeft> | null>(null);
@@ -102,7 +162,12 @@ export function SaveTheDateSection() {
         <div className="flex flex-col items-center ">
           {/* <p className="font-parfumerie text-4xl text-white sm:text-5xl">#thedecade1010</p> */}
 
-          <div className="relative w-56 sm:w-64">
+          <button
+            type="button"
+            onClick={addWeddingToCalendar}
+            aria-label="Add wedding day to calendar"
+            className="relative w-56 transition-transform hover:scale-105 sm:w-64"
+          >
             <Image
               src="/images/save-the-date-button.png"
               alt={weddingConfig.saveTheDateLabel}
@@ -110,7 +175,7 @@ export function SaveTheDateSection() {
               height={152}
               className="h-auto w-full"
             />
-          </div>
+          </button>
         </div>
       </div>
     </section>
