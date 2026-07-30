@@ -40,48 +40,55 @@ export function SaveTheDateSection() {
         className="relative mx-auto flex flex-col items-center gap-6 px-6"
         style={{ width: "clamp(320px, 36.2vw, 696px)" }}
       >
-        <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
-          <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
-          <div className="absolute inset-x-0 bottom-0 pt-10 pb-6 ">
-            <div className="flex justify-center items-center gap-6 sm:gap-6">
-              {units.map((unit, i) => (
-                <Fragment key={unit.label}>
-                  {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
-                  <div className="flex flex-col items-center">
-                    <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
-                      {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
-                    </span>
-                    <span className="font-milton text-white leading-none text-4xl text-cream/90 sm:text-2xl">
-                      {unit.label}
-                    </span>
-                  </div>
-                </Fragment>
-              ))}
+        {/* Countdown photo and the date-card/hand-photo row are now one
+            continuous block in the design (no gap between them) — wrapped
+            together so they sit flush against each other, while the outer
+            flex column's gap-6 still applies between this whole block and
+            the #thedecade1010/button group below it. */}
+        <div className="w-full">
+          <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
+            <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
+            <div className="absolute inset-x-0 bottom-0 pt-10 pb-6 ">
+              <div className="flex justify-center items-center gap-6 sm:gap-6">
+                {units.map((unit, i) => (
+                  <Fragment key={unit.label}>
+                    {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
+                    <div className="flex flex-col items-center">
+                      <span className="font-valencia text-2xl text-cream tabular-nums sm:text-3xl">
+                        {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
+                      </span>
+                      <span className="font-milton text-white leading-none text-4xl text-cream/90 sm:text-2xl">
+                        {unit.label}
+                      </span>
+                    </div>
+                  </Fragment>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid w-full grid-cols-2 shadow-lg">
-          {/* `overflow-hidden` alone doesn't stop this cell from growing —
-              CSS still sizes the box to fit the text first, THEN clips, so
-              a bigger font-size still expanded the box (and with it the
-              photo cell next to it, since a grid row stretches both to
-              match the taller one). Text now lives in an absolutely
-              positioned layer instead, which can never affect this cell's
-              own size — the aspect-[695/646] box stays fixed no matter what
-              font-size the text is given. */}
-          <div className="relative aspect-[695/646] bg-white">
-            <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden px-2 text-center">
-              <p className="font-velour-light text-sm sm:text-base" style={{ color: "#58595b" }}>
-                {groom.fullName} &amp; {bride.fullName}
-              </p>
-              <p className="font-velour-light text-xs sm:text-sm" style={{ color: "#58595b" }}>
-                {formatWeddingDateShort()}
-              </p>
+          <div className="grid w-full grid-cols-2 shadow-lg">
+            {/* `overflow-hidden` alone doesn't stop this cell from growing —
+                CSS still sizes the box to fit the text first, THEN clips, so
+                a bigger font-size still expanded the box (and with it the
+                photo cell next to it, since a grid row stretches both to
+                match the taller one). Text now lives in an absolutely
+                positioned layer instead, which can never affect this cell's
+                own size — the aspect-[695/646] box stays fixed no matter what
+                font-size the text is given. */}
+            <div className="relative aspect-[695/646] bg-white">
+              <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden px-2 text-center">
+                <p className="font-velour-light text-sm sm:text-base" style={{ color: "#58595b" }}>
+                  {groom.fullName} &amp; {bride.fullName}
+                </p>
+                <p className="font-velour-light text-xs sm:text-sm" style={{ color: "#58595b" }}>
+                  {formatWeddingDateShort()}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="relative aspect-[695/646] w-full overflow-hidden">
-            <Image src="/images/savedate-hand-v4.jpg" alt="" fill className="object-cover grayscale" />
+            <div className="relative aspect-[695/646] w-full overflow-hidden">
+              <Image src="/images/savedate-hand-v4.jpg" alt="" fill className="object-cover grayscale" />
+            </div>
           </div>
         </div>
 

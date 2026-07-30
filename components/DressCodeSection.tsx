@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
 import { Reveal } from "./Reveal";
 
@@ -6,7 +9,7 @@ export function DressCodeSection() {
   const { dressCode } = weddingConfig;
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-wine py-24 text-cream">
+    <section className="relative flex min-h-screen items-center overflow-hidden bg-wine py-16 text-cream sm:py-8">
       <Image
         src="/images/dresscode_bg.webp"
         alt=""
@@ -43,10 +46,22 @@ export function DressCodeSection() {
           />
         </Reveal>
 
-        <Reveal delay={0.25} className="font-velour flex flex-col gap-1 text-base">
+        {/* Plain motion.div (animate on mount) instead of Reveal's
+            whileInView — this section is short enough that this text sits
+            close to the bottom edge, and the slide navigation snaps the
+            whole section into view near-instantly rather than scrolling
+            past it gradually, so Reveal's "-80px" viewport margin often
+            never gets crossed and the text stays stuck invisible (same bug
+            fixed the same way for Timeline's "2024 · Barcelona" earlier). */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+          className="font-velour flex flex-col gap-1 text-base"
+        >
           <p>{dressCode.ladiesText}</p>
           <p>{dressCode.gentlemenText}</p>
-        </Reveal>
+        </motion.div>
       </div>
     </section>
   );

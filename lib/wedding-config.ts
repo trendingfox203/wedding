@@ -101,7 +101,27 @@ export const weddingConfig = {
     quote:
       "We have shared hundreds of flights and explored countless places, but the greatest destination has always been having each other",
     signatureImage: "/images/gallery-signature.png",
-    photos: ["/images/frame4_p1.webp", "/images/frame4_p2.webp"],
+    // photos[0] is the fixed left-frame portrait; the rest are the right
+    // carousel, in the order the source photos were added.
+    photos: [
+      "/images/gallery-01.webp",
+      "/images/gallery-02.webp",
+      "/images/gallery-03.webp",
+      "/images/gallery-04.webp",
+      "/images/gallery-05.webp",
+      "/images/gallery-06.webp",
+      "/images/gallery-07.webp",
+      "/images/gallery-08.webp",
+      "/images/gallery-09.webp",
+      "/images/gallery-10.webp",
+      "/images/gallery-11.webp",
+      "/images/gallery-12.webp",
+      "/images/gallery-13.webp",
+      "/images/gallery-14.webp",
+      "/images/gallery-15.webp",
+      "/images/gallery-16.webp",
+      "/images/gallery-17.webp",
+    ],
   },
 
   // --- FAQ: nội dung thật từ tài liệu "Duy Khanh Website - FAQ & Registeration Form" ---

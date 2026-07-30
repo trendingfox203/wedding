@@ -56,6 +56,23 @@ export function UntilWeMeetAgainSection() {
           </div>
         </Reveal>
       </div>
+
+      {/* Hand-drawn "With love, Duy & Khanh" signature, positioned per the
+          Figma export: 252×197 at 1111px from the left / 86px from the
+          bottom of the 1920×1080 reference frame — expressed as percentages
+          of the section so it scales with the viewport instead of being
+          pinned to a fixed pixel spot. */}
+      <div
+        className="absolute"
+        style={{
+          left: `${(1150 / 1920) * 100}%`,
+          bottom: `${(148 / 1080) * 100}%`,
+          width: `${(252 / 1920) * 100}%`,
+          height: `${(197 / 1080) * 100}%`,
+        }}
+      >
+        <Image src="/images/frame9_handsignn.png" alt="" fill className="object-contain" />
+      </div>
     </section>
   );
 }

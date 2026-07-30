@@ -2,23 +2,39 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
+
+const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
 
 export function GallerySection() {
   const { gallery, groom, bride } = weddingConfig;
-  const rightPhotos = gallery.photos.slice(1);
-  const [index, setIndex] = useState(0);
-  const count = rightPhotos.length;
+  // photos[0] + photos[1] are the special first page (quote/signature card
+  // on the left). Everything after that is paginated in pairs — page 2 =
+  // photos[2]+photos[3], page 3 = photos[4]+photos[5], etc. — so each photo
+  // after the first two appears on exactly one page, and "next" swaps both
+  // sides together instead of sliding one photo at a time.
+  const pairPhotos = gallery.photos.slice(2);
+  const pairs: [string, string | undefined][] = [];
+  for (let i = 0; i < pairPhotos.length; i += 2) {
+    pairs.push([pairPhotos[i], pairPhotos[i + 1]]);
+  }
+  const pageCount = 1 + pairs.length;
+  const [page, setPage] = useState(0);
 
-  const prev = () => setIndex((i) => (i - 1 + count) % count);
-  const next = () => setIndex((i) => (i + 1) % count);
+  const prev = () => setPage((p) => (p - 1 + pageCount) % pageCount);
+  const next = () => setPage((p) => (p + 1) % pageCount);
+
+  const isFirstPage = page === 0;
+  const leftPhoto = isFirstPage ? gallery.photos[0] : pairs[page - 1][0];
+  const rightPhoto = isFirstPage ? gallery.photos[1] : pairs[page - 1][1];
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-16">
       <div className="absolute inset-0 bg-ink/80" />
 
       <div className="relative mx-auto flex w-full max-w-4xl items-center px-4">
-        {count > 1 && (
+        {pageCount > 1 && (
           <button
             type="button"
             onClick={prev}
@@ -30,47 +46,76 @@ export function GallerySection() {
         )}
 
         <div className="grid flex-1 grid-cols-1 items-stretch sm:grid-cols-2 sm:items-start">
-          <div className="relative flex flex-col items-center justify-center gap-4 bg-cream-dim px-8 text-left text-ink sm:aspect-[653/785] sm:px-[9%]">
-            {/* Photo + quote + signature as one group, centered as a whole
-                in the frame — puts the photo right around the frame's
-                center with the quote trailing close behind it (~1 line
-                gap), instead of pinning the quote to the frame's bottom
-                edge (which put a big empty gap between photo and text). */}
-            <div className="flex mt-24 w-[55%] flex-col items-start gap-4">
-              <div className="relative aspect-[8/9] w-full overflow-hidden">
-                <Image
-                  src={gallery.photos[0]}
-                  alt={`${groom.fullName} & ${bride.fullName}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
-                {gallery.quote}
-              </p>
-              <div className="relative aspect-[16/9] w-[78%] self-end">
-                <Image
-                  src={gallery.signatureImage}
-                  alt={`${groom.fullName} & ${bride.fullName}`}
-                  fill
-                  className="object-contain object-right"
-                />
-              </div>
-            </div>
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            {isFirstPage ? (
+              <motion.div
+                key="first-left"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={fadeTransition}
+                className="relative flex flex-col items-center justify-center gap-4 bg-cream-dim px-8 text-left text-ink sm:aspect-[653/785] sm:px-[9%]"
+              >
+                {/* Photo + quote + signature as one group, centered as a whole
+                    in the frame — puts the photo right around the frame's
+                    center with the quote trailing close behind it (~1 line
+                    gap), instead of pinning the quote to the frame's bottom
+                    edge (which put a big empty gap between photo and text). */}
+                <div className="flex mt-24 w-[55%] flex-col items-start gap-4">
+                  <div className="relative aspect-[8/9] w-full overflow-hidden">
+                    <Image
+                      src={gallery.photos[0]}
+                      alt={`${groom.fullName} & ${bride.fullName}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="w-full font-velour text-[10px] text-justify leading-relaxed">
+                    {gallery.quote}
+                  </p>
+                  <div className="relative aspect-[16/9] w-[78%] self-end">
+                    <Image
+                      src={gallery.signatureImage}
+                      alt={`${groom.fullName} & ${bride.fullName}`}
+                      fill
+                      className="object-contain object-right"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`left-${page}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={fadeTransition}
+                className="relative min-h-[320px] w-full overflow-hidden sm:aspect-[653/785] sm:min-h-0"
+              >
+                {leftPhoto && <Image src={leftPhoto} alt="" fill className="object-cover" />}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="relative min-h-[320px] w-full overflow-hidden sm:aspect-[653/785] sm:min-h-0">
-            <Image
-              key={index}
-              src={rightPhotos[index]}
-              alt=""
-              fill
-              className="object-cover transition-opacity duration-500"
-            />
+            <AnimatePresence mode="wait" initial={false}>
+              {rightPhoto && (
+                <motion.div
+                  key={`right-${page}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={fadeTransition}
+                  className="absolute inset-0"
+                >
+                  <Image src={rightPhoto} alt="" fill className="object-cover" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        {count > 1 && (
+        {pageCount > 1 && (
           <button
             type="button"
             onClick={next}
