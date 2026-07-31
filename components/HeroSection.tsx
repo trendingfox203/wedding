@@ -1,10 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { weddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
+import { useWeddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
+import { useUiStrings } from "@/lib/ui-strings";
+import { useFont } from "@/lib/fonts";
 import { playBackgroundMusic } from "@/lib/backgroundMusic";
 
 export function HeroSection() {
+  const weddingConfig = useWeddingConfig();
+  const ui = useUiStrings();
+  const font = useFont();
   const { groom, bride, tagline, openInvitationLabel } = weddingConfig;
 
   return (
@@ -26,10 +31,10 @@ export function HeroSection() {
       <div className="relative z-10 flex h-full flex-col items-center px-6 text-center text-cream [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
         <div className="flex flex-col items-center pt-[12vh]">
           <h2
-            className="font-velour-light uppercase"
+            className={`${font("bodyLight")} uppercase`}
             style={{ fontSize: "clamp(32px, 4.11vw, 90px)", letterSpacing: "clamp(4px, 0.26vw, 6px)", lineHeight: 1.25 }}
           >
-            A Love Story
+            {ui.hero.loveStory}
           </h2>
           <p
             className="font-velour-light mt-3 uppercase tracking-[0.05em]"
@@ -50,7 +55,7 @@ export function HeroSection() {
             {groom.shortName} <span className="font-parfumerie-old">&amp;</span> {bride.shortName}
           </h1>
           <p
-            className="font-parfumerie-regular leading-none"
+            className={`${font("scriptRegular")} leading-none`}
             style={{ fontSize: "clamp(28px, 4.11vw, 90px)", marginTop: "clamp(14px, 1.67vw, 34px)" }}
           >
             {tagline}

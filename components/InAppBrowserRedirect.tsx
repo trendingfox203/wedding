@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { isAndroid, isIOS, isInAppBrowser } from "@/lib/inAppBrowser";
+import { useUiStrings } from "@/lib/ui-strings";
 
 // Guests will mostly open this link from a Zalo/Messenger/Facebook chat,
 // which loads it inside that app's own locked-down WebView instead of
@@ -14,6 +15,7 @@ import { isAndroid, isIOS, isInAppBrowser } from "@/lib/inAppBrowser";
 // just point the user at the "..." menu these apps already provide for
 // exactly this.
 export function InAppBrowserRedirect() {
+  const ui = useUiStrings();
   const [showIOSBanner, setShowIOSBanner] = useState(false);
 
   useEffect(() => {
@@ -34,8 +36,7 @@ export function InAppBrowserRedirect() {
 
   return (
     <div className="fixed inset-x-0 top-0 z-50 bg-wine px-4 py-3 text-center text-sm text-cream shadow-lg">
-      Để xem thiệp mời đầy đủ, vui lòng nhấn <strong>⋯</strong> (hoặc biểu tượng chia sẻ) ở góc màn hình và chọn{" "}
-      <strong>&quot;Mở bằng trình duyệt&quot;</strong>.
+      {ui.inAppBrowser.openInBrowserBanner}
     </div>
   );
 }

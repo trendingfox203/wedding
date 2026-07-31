@@ -36,6 +36,7 @@
   --font-milton: var(--font-milton);
   --font-valencia: var(--font-valencia);
   --font-valenciaLight: var(--font-valenciaLight);
+  --font-baskerville: var(--font-baskerville);
 }
 
 .stroke-thin {

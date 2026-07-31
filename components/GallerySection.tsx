@@ -3,7 +3,9 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig } from "@/lib/wedding-config";
+import { useUiStrings } from "@/lib/ui-strings";
+import { useFont } from "@/lib/fonts";
 import { getPhotoConfig } from "@/lib/photo-config";
 import { isDesktopViewport } from "@/lib/viewport";
 
@@ -30,7 +32,9 @@ function photoStyle(src: string, isMobile: boolean): CSSProperties {
 }
 
 export function GallerySection() {
-  const { gallery, groom, bride } = weddingConfig;
+  const { gallery, groom, bride } = useWeddingConfig();
+  const ui = useUiStrings();
+  const font = useFont();
   // photos[0] + photos[1] are the special first page (quote/signature card
   // on the left). Everything after that is paginated in pairs — page 2 =
   // photos[2]+photos[3], page 3 = photos[4]+photos[5], etc. — so each photo
@@ -69,7 +73,7 @@ export function GallerySection() {
           <button
             type="button"
             onClick={prev}
-            aria-label="Previous photo"
+            aria-label={ui.gallery.previousAria}
             // 1. Dùng màu trắng sáng, thêm text-shadow để tách khỏi mọi nền
             // 2. Tăng kích thước nút bấm (w-12 h-12) và dùng SVG có sẵn
             className="absolute left-0 z-10 flex h-12 w-12 items-center justify-center rounded-full text-[#878787] transition-colors hover:bg-cream/20"
@@ -118,8 +122,8 @@ export function GallerySection() {
                     center with the quote trailing close behind it (~1 line
                     gap), instead of pinning the quote to the frame's bottom
                     edge (which put a big empty gap between photo and text). */}
-                <div className="flex mt-4 sm:mt-24 w-full sm:w-[55%] flex-col items-start gap-2 sm:gap-4">
-                  <div className="relative aspect-[10/16] sm:aspect-[8/9] w-full sm:overflow-hidden">
+                <div className="flex mt-4 sm:mt-4 w-full sm:w-[70%] flex-col items-center sm:items-start gap-2 sm:gap-4">
+                  <div className="relative w-[70%] aspect-[140/180] sm:aspect-[8/9] sm:w-full sm:overflow-hidden">
                     <Image
                       src={gallery.photos[0]}
                       alt={`${groom.fullName} & ${bride.fullName}`}
@@ -127,7 +131,7 @@ export function GallerySection() {
                       style={photoStyle(gallery.photos[0], isMobile)}
                     />
                   </div>
-                  <p className="w-full font-velour text-[0.25rem] text-justify leading-relaxed sm:text-[10px]">
+                  <p className={`w-full ${font("body")} text-[0.4rem] text-justify leading-relaxed sm:text-[10px]`}>
                     {gallery.quote}
                   </p>
                   <div className="relative aspect-[16/9] w-[78%] self-end">
@@ -188,7 +192,7 @@ export function GallerySection() {
           <button
             type="button"
             onClick={next}
-            aria-label="Next photo"
+            aria-label={ui.gallery.nextAria}
             // Tương tự cho nút bên phải
             className="absolute right-0 z-10 flex h-12 w-12 items-center justify-center rounded-full text-white transition-colors hover:bg-white/20"
             style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}

@@ -3,7 +3,9 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig } from "@/lib/wedding-config";
+import { useUiStrings } from "@/lib/ui-strings";
+import { useFont } from "@/lib/fonts";
 import { isDesktopViewport } from "@/lib/viewport";
 
 // Same mechanism as TimelineSection: on desktop, Details + Dresscode share
@@ -19,7 +21,9 @@ export type DetailsHandle = {
 const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
 
 export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(_props, ref) {
-  const { venue, schedule, dressCode } = weddingConfig;
+  const { venue, schedule, dressCode } = useWeddingConfig();
+  const ui = useUiStrings();
+  const font = useFont();
   const [showDressCode, setShowDressCode] = useState(false);
 
   useImperativeHandle(
@@ -48,20 +52,20 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
     return (
       <>
         <div className="flex flex-col items-center gap-2">
-          <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">The Details</h2>
+          <h2 className={`${font("heading")} stroke-thin text-5xl sm:text-6xl`}>{ui.details.theDetails}</h2>
           <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
             {venue.name}
           </h3>
-          <p className="font-velour mt-4 text-base">{venue.room}</p>
-          <p className="font-velour text-base">{venue.address}</p>
+          <p className={`${font("body")} mt-4 text-base`}>{venue.room}</p>
+          <p className={`${font("body")} text-base`}>{venue.address}</p>
         </div>
 
         {/* Figma keeps this row much tighter/closer to the address above it,
             and the three times clustered together (not spread edge-to-edge)
             — matched via a Figma export: gap from address ~= 0.93x the
             address's own width, schedule row itself compact around center. */}
-        <div className="font-velour mt-12 flex flex-row items-start sm:items-center sm:mt-[170px] sm:flex-row sm:gap-2">
-          {schedule.map((item, i) => (
+        <div className={`${font("body")} mt-12 flex flex-row items-start sm:items-center sm:mt-[170px] sm:flex-row sm:gap-2`}>
+          {schedule.map((item, i: number) => (
             <div key={item.label} className="flex items-start sm:gap-6">
               <div className="flex flex-col items-center gap-1 sm:gap-3">
                 <p className="text-lg sm:text-3xl">{item.time}</p>
@@ -81,8 +85,8 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
     return (
       <>
         <div className="flex flex-col items-center gap-2">
-          <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Dresscode</h2>
-          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
+          <h2 className={`${font("heading")} stroke-thin text-5xl sm:text-6xl`}>{ui.details.dresscode}</h2>
+          <h3 className={`${font("bodyLight")} mt-2 text-4xl uppercase tracking-wide sm:text-5xl`}>
             {dressCode.heading}
           </h3>
         </div>
@@ -90,7 +94,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
         <div className="relative mt-4 w-full max-w-2xl">
           <Image
             src="/images/dresscode-illustration-v3.webp"
-            alt="Guests in the wedding's dress code palette"
+            alt={ui.details.dresscodeIllustrationAlt}
             width={1600}
             height={719}
             className="h-auto w-full"
@@ -100,14 +104,14 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
         <div className="relative w-full max-w-xs">
           <Image
             src="/images/dresscode-swatches-v2.webp"
-            alt="Dress code fabric swatches"
+            alt={ui.details.swatchesAlt}
             width={1200}
             height={221}
             className="h-auto w-full"
           />
         </div>
 
-        <div className="font-velour flex flex-col gap-1 text-base">
+        <div className={`${font("body")} flex flex-col gap-1 text-base`}>
           <p>{dressCode.ladiesText}</p>
           <p>{dressCode.gentlemenText}</p>
         </div>

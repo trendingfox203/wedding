@@ -1,4 +1,6 @@
+import type { NextRequest } from "next/server";
 import { buildWeddingICS } from "@/lib/calendar";
+import type { Language } from "@/lib/LanguageContext";
 
 // Serves the wedding event as a real .ics file at a plain https:// URL
 // instead of a data: URI or client-built Blob — those get silently
@@ -7,8 +9,11 @@ import { buildWeddingICS } from "@/lib/calendar";
 // Facebook), which don't know how to route a `data:` scheme at all. A
 // normal same-origin URL with the right Content-Type is something every
 // browser/WebView already knows how to handle.
-export async function GET() {
-  return new Response(buildWeddingICS(), {
+export async function GET(request: NextRequest) {
+  const langParam = request.nextUrl.searchParams.get("lang");
+  const lang: Language = langParam === "vi" ? "vi" : "en";
+
+  return new Response(buildWeddingICS(lang), {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
       "Content-Disposition": 'attachment; filename="duy-khanh-wedding.ics"',

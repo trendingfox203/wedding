@@ -1,4 +1,5 @@
-import { weddingConfig } from "./wedding-config";
+import { getWeddingConfig } from "./wedding-config";
+import type { Language } from "./LanguageContext";
 
 // RFC 5545 requires CRLF line breaks and backslash-escaped commas/semicolons
 // in text fields — the venue address has both.
@@ -10,14 +11,19 @@ function toICSDate(d: Date) {
   return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 }
 
-export function buildWeddingICS() {
-  const { groom, bride, venue } = weddingConfig;
-  const start = new Date(weddingConfig.weddingDateISO);
+const weddingDayLabel: Record<Language, string> = {
+  en: "WEDDING DAY",
+  vi: "NGÀY CƯỚI",
+};
+
+export function buildWeddingICS(lang: Language = "en") {
+  const { groom, bride, venue } = getWeddingConfig(lang);
+  const start = new Date(getWeddingConfig(lang).weddingDateISO);
   // No explicit end time in the source data — block out a reasonable
   // 4-hour window (ceremony through reception) rather than leaving it
   // open-ended, which some calendar apps render awkwardly.
   const end = new Date(start.getTime() + 4 * 60 * 60 * 1000);
-  const title = `${groom.shortName.toUpperCase()} & ${bride.shortName.toUpperCase()}'S WEDDING DAY`;
+  const title = `${groom.shortName.toUpperCase()} & ${bride.shortName.toUpperCase()}'S ${weddingDayLabel[lang]}`;
   const location = `${venue.name}, ${venue.address}`;
 
   const lines = [
