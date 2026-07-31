@@ -3,6 +3,7 @@
 import { useEffect, useRef, type RefObject } from "react";
 import type { TimelineHandle } from "@/components/TimelineSection";
 import type { DetailsHandle } from "@/components/DetailsSection";
+import { isDesktopViewport } from "@/lib/viewport";
 
 // Index of the Timeline section among `document.querySelectorAll("main section")`,
 // fixed by the section order in app/page.tsx (Hero, SaveTheDate, Timeline, ...).
@@ -48,10 +49,17 @@ function easeInOutCubic(t: number) {
 }
 
 /**
- * Site-wide "one scroll/swipe = one slide" navigation: each top-level
+ * Desktop-only "one scroll/swipe = one slide" navigation: each top-level
  * <section> under <main> is treated as a slide. A wheel notch or swipe
  * animates straight to the next/previous section's edge instead of the
- * page free-scrolling gradually.
+ * page free-scrolling gradually. On mobile this snapping is skipped
+ * entirely — a swipe that only advances one section at a time (or, worse,
+ * only crossfades a sub-step in place with no visible movement) doesn't
+ * read as a distinct gesture the way a mouse-wheel notch does, so mobile
+ * just gets plain native scroll through the whole page instead. The
+ * "Open Invitation" gate (nothing scrollable until it's clicked) still
+ * applies on mobile — that's a separate, deliberate feature, not part of
+ * the per-slide snapping this hook otherwise skips there.
  *
  * Sections taller than the viewport (e.g. the RSVP form) still scroll
  * natively within themselves — slide-advance only triggers once the user
@@ -61,7 +69,9 @@ function easeInOutCubic(t: number) {
  * Timeline is a single slide with its own past/future sub-step: scrolling
  * into/through it first tries `timelineRef.current.tryAdvance` before
  * moving on to the next/previous slide. Details/Dresscode work the same way
- * via `detailsRef`.
+ * via `detailsRef`. Both those handles already return `false` on mobile (see
+ * isDesktopViewport() in TimelineSection/DetailsSection), which is now moot
+ * there anyway since mobile never calls into this hook's slide-advance path.
  */
 export function useSlideNavigation(
   timelineRef: RefObject<TimelineHandle | null>,
@@ -215,6 +225,10 @@ export function useSlideNavigation(
     }
 
     function onWheel(e: WheelEvent) {
+      // Mobile: no slide-snap, plain native scroll (the gate above still
+      // blocks it via the html overflow lock until "Open Invitation" is
+      // clicked — that part doesn't run through this handler at all).
+      if (!isDesktopViewport()) return;
       // Any wheel event — trigger, lock tail, or momentum tail — pushes the
       // "gesture still going" window out further.
       armGestureIdleTimer();
@@ -242,6 +256,7 @@ export function useSlideNavigation(
     }
 
     function onTouchMove(e: TouchEvent) {
+      if (!isDesktopViewport()) return;
       if (lockedRef.current) {
         e.preventDefault();
         return;
@@ -262,6 +277,7 @@ export function useSlideNavigation(
     }
 
     function onKeyDown(e: KeyboardEvent) {
+      if (!isDesktopViewport()) return;
       const target = e.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
       if (lockedRef.current) return;
