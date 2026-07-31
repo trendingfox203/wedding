@@ -46,9 +46,12 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
 
   return (
     <section id="details" className="relative flex min-h-screen items-center overflow-hidden bg-wine py-16 text-cream sm:py-8">
-      <Image src="/images/details-illustration.webp" alt="" fill aria-hidden className="pointer-events-none object-cover" />
+      <div className="absolute inset-0 pointer-events-none">
 
-      <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-3 px-6 text-center">
+        <Image src="/images/details-illustration.webp" alt="" fill aria-hidden className="pointer-events-none hidden sm:block object-cover " />
+        <Image src="/images/details-illustration-mobile.webp" alt="" fill aria-hidden className="pointer-events-none block sm:hidden object-cover " />
+      </div>
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center sm:gap-3 px-6 text-center">
         <AnimatePresence mode="wait">
           {showDressCode ? (
             <motion.div
@@ -98,7 +101,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={fadeTransition}
-              className="flex w-full flex-col items-center gap-3"
+              className="flex w-full flex-col items-center gap-48 sm:gap-3"
             >
               <div className="flex flex-col items-center gap-2">
                 <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">The Details</h2>
@@ -113,17 +116,17 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
                   and the three times clustered together (not spread edge-to-edge)
                   — matched via a Figma export: gap from address ~= 0.93x the
                   address's own width, schedule row itself compact around center. */}
-              <div className="font-velour mt-12 flex flex-col items-center gap-10 sm:mt-[170px] sm:flex-row sm:gap-2">
+              <div className="font-velour mt-12 flex flex-row items-start sm:items-center sm:mt-[170px] sm:flex-row sm:gap-2">
                 {schedule.map((item, i) => (
-                  <div key={item.label} className="flex items-start gap-10 sm:gap-6">
-                    <div className="flex flex-col items-center gap-3">
-                      <p className="text-2xl sm:text-3xl">{item.time}</p>
-                      <p className="text-lg tracking-normal uppercase text-cream">
+                  <div key={item.label} className="flex items-start sm:gap-6">
+                    <div className="flex flex-col items-center gap-1 sm:gap-3">
+                      <p className="text-lg sm:text-3xl">{item.time}</p>
+                      <p className="text-sm tracking-normal uppercase text-cream">
                         {item.label}
                       </p>
                     </div>
                     {i < schedule.length - 1 && (
-                      <span className="hidden mt-2 mr-5  h-px w-[64px] bg-white sm:block" />
+                      <span className="block mt-2 mx-2 sm:mr-5  h-px w-[32px] sm:w-[64px] bg-white sm:block" />
                     )}
                   </div>
                 ))}

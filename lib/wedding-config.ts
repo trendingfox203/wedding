@@ -39,7 +39,7 @@ export const weddingConfig = {
   schedule: [
     { time: "5:30 PM", label: "Guest Arrival" },
     { time: "6:30 PM", label: "Ceremony" },
-    { time: "7:30 PM", label: "Reception" },
+    { time: "7:00 PM", label: "Reception" },
   ],
   story: {
     heading: "A Love Story",

@@ -35,14 +35,14 @@ export function UntilWeMeetAgainSection() {
       <Image src="/images/until-we-meet-bg-v3.jpg" alt="" fill className="object-cover grayscale" />
       <div className="absolute inset-0 bg-ink/60" />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 sm:flex-row sm:items-center sm:justify-between sm:gap-44">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-6  sm:w-[90vw]  sm:flex-row sm:items-center sm:justify-between sm:gap-44">
         <Reveal className="flex flex-col items-center gap-4 text-center">
-          <h2 className="font-velour text-2xl uppercase tracking-[0.25em] sm:text-3xl">
+          <h2 className="font-velour text-xl uppercase tracking-[0.25em] sm:text-3xl">
             {closing.heading}
           </h2>
           {/* <div className="h-px w-14 bg-cream/70" /> */}
-          <p className="font-gt-italic mt-2 text-2xl">{closing.subheading}</p>
-          <p className="font-velour-light text-2xl uppercase tracking-wide">
+          <p className="font-gt-italic mt-2 text-xl sm:text-2xl">{closing.subheading}</p>
+          <p className="font-velour-light text-xl sm:text-2xl uppercase tracking-wide">
             {formatWeddingDateShort()}
           </p>
           {/* <div className="h-px w-14 bg-cream/70" /> */}
@@ -83,13 +83,27 @@ export function UntilWeMeetAgainSection() {
           bottom of the 1920×1080 reference frame — expressed as percentages
           of the section so it scales with the viewport instead of being
           pinned to a fixed pixel spot. */}
+      {/* Dành cho Desktop (chỉ hiện trên sm trở lên) */}
       <div
-        className="absolute"
+        className="absolute hidden sm:block"
         style={{
           left: `${(1150 / 1920) * 100}%`,
           bottom: `${(148 / 1080) * 100}%`,
           width: `${(252 / 1920) * 100}%`,
           height: `${(197 / 1080) * 100}%`,
+        }}
+      >
+        <Image src="/images/frame9_handsignn.png" alt="" fill className="object-contain" />
+      </div>
+
+      {/* Dành cho Mobile (chỉ hiện dưới sm) */}
+      <div
+        className="absolute block sm:hidden"
+        style={{
+          left: "16%",
+          bottom: "14%",
+          width: "48%",
+          height: "12%",
         }}
       >
         <Image src="/images/frame9_handsignn.png" alt="" fill className="object-contain" />
