@@ -59,7 +59,7 @@ export function SaveTheDateSection() {
   ];
 
   return (
-    <section className="relative flex min-h-screen items-end overflow-hidden py-20">
+    <section className="relative flex min-h-screen items-center sm:items-end overflow-hidden py-20">
       <div className="absolute inset-0 bg-ink/70" />
 
       <div
@@ -75,16 +75,16 @@ export function SaveTheDateSection() {
           <div className="relative aspect-[695/334] w-full overflow-hidden shadow-lg">
             <Image src="/images/savedate-top-v2.jpg" alt="" fill className="object-cover" />
             <div className="absolute inset-x-0 bottom-0 pt-10 pb-6 ">
-              <div className="flex justify-center items-center gap-5 sm:gap-5">
+              <div className="flex justify-center items-center gap-2 sm:gap-5">
                 {units.map((unit, i) => (
                   <Fragment key={unit.label}>
-                    {i > 0 && <div className="h-8 w-0.5 -mt-[16px] bg-cream/70 sm:h-8" />}
+                    {i > 0 && <div className="h-6 w-0.5 -mt-[10px] bg-cream/70 sm:-mt-[16px] sm:h-8" />}
                     <div className="flex flex-col items-center">
-                      <span className="font-valencia text-2xl text-white tabular-nums sm:text-3xl">
+                      <span className="font-valencia text-lg text-white tabular-nums sm:text-3xl">
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
                       <span
-                        className="font-milton text-white leading-none text-2xl sm:text-3xl"
+                        className="font-milton text-white leading-none text-lg sm:text-3xl"
                         style={{
                           WebkitTextStroke: '0.2px rgb(255,255,2555)',
 
@@ -111,13 +111,13 @@ export function SaveTheDateSection() {
             <div className="relative aspect-[695/646] bg-white">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden px-2 text-center text-black">
                 <p
-                  className="font-milton text-5xl sm:text-6xl leading-[0.8] tracking-[-1px]"
+                  className="font-milton text-3xl sm:text-6xl leading-[0.8] tracking-[-1px]"
                   style={{ WebkitTextStroke: '0.1px #000' }}
                 >
                   The
                 </p>
-                <p className="font-velour-light text-2xl sm:text-3xl tracking-normal">DECADE</p>
-                <p className="font-velour-light text-lg sm:text-xl tracking-normal">10.10</p>
+                <p className="font-velour-light text-xl sm:text-3xl tracking-normal">DECADE</p>
+                <p className="font-velour-light text-base sm:text-xl tracking-normal">10.10</p>
               </div>
             </div>
             <div className="relative aspect-[695/646] w-full overflow-hidden">

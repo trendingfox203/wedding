@@ -4,6 +4,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { weddingConfig } from "@/lib/wedding-config";
+import { isDesktopViewport } from "@/lib/viewport";
 
 type TimelineItem = { title: string; text: string; photo: string };
 
@@ -30,27 +31,43 @@ export type TimelineHandle = {
   enterFromBottom: () => void;
 };
 
-// Timeline items animate on mount/switch (not on scroll-into-view like Reveal)
-// because the whole set is meant to be visible at once — an element sitting
-// near the bottom edge would otherwise never cross Reveal's "-80px" viewport
-// margin and would stay stuck invisible.
+// Desktop: items animate on mount/switch (not on scroll-into-view like
+// Reveal) because the whole set is meant to be visible at once — under the
+// old slide-navigation, an element sitting near the bottom edge would
+// otherwise never cross Reveal's "-80px" viewport margin and would stay
+// stuck invisible, since the JS-driven navigation snapped the section into
+// view almost instantly rather than scrolling gradually.
+//
+// Mobile no longer uses that slide-navigation at all (see isDesktopViewport
+// in useSlideNavigation) — it's a genuine, gradual native scroll now, which
+// is exactly the condition whileInView needs to work correctly. So mobile's
+// copies of these (trigger="scroll") reveal as the user actually scrolls to
+// them, instead of all firing at once on page load before they're ever seen.
+type RevealTrigger = "mount" | "scroll";
+
 function TextBlock({
   item,
   delay,
   width,
   fontSize = 26,
   className = "",
+  trigger = "mount",
 }: {
   item: TimelineItem;
   delay: number;
   width: number;
   fontSize?: number;
   className?: string;
+  trigger?: RevealTrigger;
 }) {
+  const motionProps =
+    trigger === "mount"
+      ? { animate: { opacity: 1, y: 0 } }
+      : { whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" } };
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
+      {...motionProps}
       transition={{ duration: 0.7, delay, ease: "easeOut" }}
       style={{ maxWidth: width }}
       className={`flex flex-col gap-2 text-left font-valencia ${className}`}
@@ -69,17 +86,23 @@ function PhotoBlock({
   width,
   height,
   className = "",
+  trigger = "mount",
 }: {
   item: TimelineItem;
   delay: number;
   width: number;
   height: number;
   className?: string;
+  trigger?: RevealTrigger;
 }) {
+  const motionProps =
+    trigger === "mount"
+      ? { animate: { opacity: 1, y: 0 } }
+      : { whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" } };
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
+      {...motionProps}
       transition={{ duration: 0.7, delay, ease: "easeOut" }}
       style={{ width, height }}
       className={`relative shrink-0 overflow-hidden rounded-sm ${className}`}
@@ -97,21 +120,29 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
   const items = showFuture ? timeline.future : timeline.past;
   const [item0, item1, item2] = items;
   const setKey = showFuture ? "future" : "past";
+  // Mobile only: both sets laid out as one continuous list instead of
+  // toggled — see isDesktopViewport() above.
+  const mobileItems = [...timeline.past, ...timeline.future];
 
   useImperativeHandle(
     ref,
     () => ({
       tryAdvance(down: boolean) {
+        // Mobile shows past+future as one continuous scroll — no sub-step
+        // to intercept, so every scroll just moves on to the next/previous
+        // slide (the section's own height then takes over via the
+        // slide-nav's native-scroll-until-edge handling for tall sections).
+        if (!isDesktopViewport()) return false;
         if (down && showFuture) return false;
         if (!down && !showFuture) return false;
         setShowFuture(down);
         return true;
       },
       enterFromTop() {
-        setShowFuture(false);
+        if (isDesktopViewport()) setShowFuture(false);
       },
       enterFromBottom() {
-        setShowFuture(true);
+        if (isDesktopViewport()) setShowFuture(true);
       },
     }),
     [showFuture],
@@ -127,7 +158,9 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
       <div className="text-left">
         <button
           type="button"
-          onClick={() => setShowFuture((v) => !v)}
+          onClick={() => {
+            if (isDesktopViewport()) setShowFuture((v) => !v);
+          }}
           className="font-milton stroke-thin text-6xl transition-opacity hover:opacity-80"
           style={fontSize ? { fontSize } : undefined}
         >
@@ -141,28 +174,27 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
     <section className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream sm:py-8">
       <div className="absolute inset-0 bg-ink/70" />
       <div className="relative mx-auto max-w-3xl px-6">
-        {/* Mobile: single sequential column, heading on top */}
+        {/* Mobile: single sequential column, heading on top, past and
+            future laid out one after another — no swipe-to-toggle here
+            (see isDesktopViewport() above), just scroll to see the rest. */}
         <div className="flex flex-col gap-10 sm:hidden">
           <Heading />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={setKey}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={fadeTransition}
-              className="flex flex-col gap-10"
-            >
-              {items.map((item, i) => (
-                <div key={item.title} className="flex flex-col gap-5">
-                  <TextBlock item={item} delay={i * 0.1} width={320} />
-                  <div className="relative aspect-[9/10] w-full overflow-hidden rounded-sm">
-                    <Image src={item.photo} alt={item.title} fill className="object-cover" />
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+          <div className="flex flex-col gap-10">
+            {mobileItems.map((item) => (
+              <div key={item.title} className="flex flex-col gap-5">
+                <TextBlock item={item} delay={0} width={320} trigger="scroll" />
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+                  className="relative aspect-[9/10] w-full overflow-hidden rounded-sm"
+                >
+                  <Image src={item.photo} alt={item.title} fill className="object-cover" />
+                </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Desktop: two staggered columns. Scaled down (SCALE=0.72) from the

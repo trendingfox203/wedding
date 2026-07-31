@@ -41,7 +41,7 @@ export function HeroSection() {
 
         <div
           className="relative flex flex-1 flex-col items-center justify-center"
-          style={{ paddingBottom: "120px"}}
+          style={{ paddingBottom: "120px" }}
         >
           <h1
             className="font-parfumerie leading-none"
@@ -60,7 +60,7 @@ export function HeroSection() {
         <a
           href="#open-invitation"
           onClick={playBackgroundMusic}
-          className="mb-[3vh] transition-transform hover:scale-105"
+          className="mb-[6vh] sm:mb-[3vh] transition-transform hover:scale-105"
           style={{ width: "clamp(200px, 19.06vw, 400px)" }}
         >
           <Image
