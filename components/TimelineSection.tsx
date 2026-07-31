@@ -222,7 +222,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
                 transition={fadeTransition}
                 className="flex flex-col items-start"
               >
-                <TextBlock className="text-base"
+                <TextBlock
                   item={item0}
                   delay={0}
                   width={s(298)}
