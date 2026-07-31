@@ -56,7 +56,7 @@ function TextBlock({
 }: {
   item: TimelineItem;
   delay: number;
-  width: number;
+  width?: number;
   fontSize?: number;
   className?: string;
   trigger?: RevealTrigger;
@@ -92,7 +92,7 @@ function PhotoBlock({
 }: {
   item: TimelineItem;
   delay: number;
-  width: number;
+  width?: number;
   height: number;
   className?: string;
   trigger?: RevealTrigger;
@@ -188,7 +188,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
             return (
               <div key={item.title} className={`flex flex-row items-start gap-3 w-full ${isOddIndex ? 'mt-2' : ''}`}>
                 <div className={`flex-1 ${isOddIndex ? 'order-1' : 'order-2'}`}>
-                  <TextBlock item={item} fontSize={18} delay={0} width="100%" trigger="scroll" />
+                  <TextBlock item={item} fontSize={16} delay={0} trigger="scroll" />
                 </div>
                 <div className={`flex-1 ${isOddIndex ? 'order-2' : 'order-1'}`}>
                   <motion.div
