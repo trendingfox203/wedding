@@ -31,7 +31,7 @@ export function HeroSection() {
       <div className="relative z-10 flex h-full flex-col items-center px-6 text-center text-cream [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
         <div className="flex flex-col items-center pt-[12vh]">
           <h2
-            className={`${font("bodyLight")} uppercase`}
+            className={`font-velour-light uppercase`}
             style={{ fontSize: "clamp(32px, 4.11vw, 90px)", letterSpacing: "clamp(4px, 0.26vw, 6px)", lineHeight: 1.25 }}
           >
             {ui.hero.loveStory}
@@ -55,7 +55,7 @@ export function HeroSection() {
             {groom.shortName} <span className="font-parfumerie-old">&amp;</span> {bride.shortName}
           </h1>
           <p
-            className={`${font("scriptRegular")} leading-none`}
+            className={`font-parfumerie-regular leading-none`}
             style={{ fontSize: "clamp(28px, 4.11vw, 90px)", marginTop: "clamp(14px, 1.67vw, 34px)" }}
           >
             {tagline}

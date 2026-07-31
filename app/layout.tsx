@@ -69,7 +69,11 @@ const milton = localFont({
   variable: "--font-milton",
   display: "swap",
 });
-
+const miltonVn = localFont({
+  src: "./fonts/1FTV-VIP-Milton-One-Bold.otf",
+  variable: "--font-milton-vn",
+  display: "swap",
+});
 // Timeline (frame3): chữ trong card (năm/địa điểm/mô tả).
 const valencia = localFont({
   src: "./fonts/Valencia-Light Regular.ttf",
@@ -118,7 +122,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${baskerville.variable} ${body.variable} h-full antialiased`}
+      className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${miltonVn.variable} ${valencia.variable} ${baskerville.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
         <LanguageProvider>

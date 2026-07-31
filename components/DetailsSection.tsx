@@ -68,7 +68,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
           {schedule.map((item, i: number) => (
             <div key={item.label} className="flex items-start sm:gap-6">
               <div className="flex flex-col items-center gap-1 sm:gap-3">
-                <p className="text-lg sm:text-3xl">{item.time}</p>
+                <p className="font-velour text-lg sm:text-3xl">{item.time}</p>
                 <p className="text-sm tracking-normal uppercase text-cream">{item.label}</p>
               </div>
               {i < schedule.length - 1 && (

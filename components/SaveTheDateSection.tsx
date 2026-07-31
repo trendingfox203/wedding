@@ -91,7 +91,7 @@ export function SaveTheDateSection() {
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
                       <span
-                        className={`${font("heading")} text-white leading-none text-lg sm:text-3xl`}
+                        className={`font-milton text-white leading-none text-lg sm:text-3xl`}
                         style={{
                           WebkitTextStroke: '0.2px rgb(255,255,2555)',
 
@@ -118,12 +118,12 @@ export function SaveTheDateSection() {
             <div className="relative aspect-[695/646] bg-white">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden px-2 text-center text-black">
                 <p
-                  className={`${font("heading")} text-3xl sm:text-6xl leading-[0.8] tracking-[-1px]`}
+                  className={`font-milton text-3xl sm:text-6xl leading-[0.8] tracking-[-1px]`}
                   style={{ WebkitTextStroke: '0.1px #000' }}
                 >
                   {ui.saveTheDate.the}
                 </p>
-                <p className={`${font("bodyLight")} text-xl sm:text-3xl tracking-normal`}>{ui.saveTheDate.decade}</p>
+                <p className={`font-velour-light text-xl sm:text-3xl tracking-normal`}>{ui.saveTheDate.decade}</p>
                 <p className="font-velour-light text-base sm:text-xl tracking-normal">10.10</p>
               </div>
             </div>

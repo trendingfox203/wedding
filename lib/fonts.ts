@@ -11,7 +11,7 @@
 import { useLanguage } from "./LanguageContext";
 
 const fontMap = {
-  heading: { en: "font-milton", vi: "font-baskerville" },
+  heading: { en: "font-milton", vi: "font-milton-vn" },
   body: { en: "font-velour", vi: "font-baskerville" },
   bodyLight: { en: "font-velour-light", vi: "font-baskerville" },
   timeline: { en: "font-valencia", vi: "font-baskerville" },
