@@ -107,7 +107,7 @@ const uiStringsEn: UiStrings = {
     rsvp: "RSVP",
     deadlineNotice: (date: string) => `Please kindly RSVP before ${date}`,
     reminder:
-      "We kindly ask that you confirm your attendance before the RSVP deadline. Your response will help us prepare a wonderful celebration for everyone.",
+      "We kindly ask that you confirm your attendance before the RSVP deadline.\n Your response will help us prepare a wonderful celebration for everyone.",
     closeAria: "Close",
     attendingLegend: "Will you be attending?",
     attendingAcceptLabel: "Joyfully accepts",
@@ -133,10 +133,10 @@ const uiStringsVi: UiStrings = {
     loveStory: "A Love Story",
   },
   countdown: {
-    days: "Days",
-    hours: "Hours",
-    minutes: "Minutes",
-    seconds: "Seconds",
+    days: "Ngày",
+    hours: "Giờ",
+    minutes: "Phút",
+    seconds: "Giây",
   },
   saveTheDate: {
     the: "The",
@@ -160,15 +160,15 @@ const uiStringsVi: UiStrings = {
     swatchesAlt: "Bảng màu vải gợi ý trang phục",
   },
   faq: {
-    frequently: "Các Câu Hỏi",
+    frequently: "Câu Hỏi",
     questions: "Thường Gặp",
   },
   rsvp: {
-    kindly: "Kindly",
-    rsvp: "RSVP",
+    kindly: "Xác nhận",
+    rsvp: "THAM DỰ",
     deadlineNotice: (date: string) => `Vui lòng xác nhận tham dự trước ngày ${date}`,
     reminder:
-      "Kính mong Quý khách xác nhận tham dự trước thời hạn RSVP. Sự phản hồi của Quý khách sẽ giúp chúng tôi chuẩn bị chu đáo cho ngày trọng đại.",
+      "Kính mong Quý khách xác nhận tham dự trước thời hạn RSVP.\n Sự phản hồi của Quý khách sẽ giúp chúng tôi chuẩn bị chu đáo cho ngày trọng đại.",
     closeAria: "Đóng",
     attendingLegend: "Vui lòng xác nhận tham dự",
     attendingAcceptLabel: "Tôi sẽ tham dự",

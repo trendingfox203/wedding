@@ -176,48 +176,37 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream sm:py-8">
       <div className="absolute inset-0 bg-ink/70" />
+      {/* QUAN TRỌNG: Giữ nguyên `max-w-3xl` và `px-6` để Desktop không đổi */}
       <div className="relative mx-auto max-w-3xl px-6">
-        {/* Mobile: single sequential column, heading on top, past and
-            future laid out one after another — no swipe-to-toggle here
-            (see isDesktopViewport() above), just scroll to see the rest. */}
-        <div className="flex flex-col gap-10 sm:hidden">
+
+        {/* === MOBILE: LAYOUT MỚI (2 CỘT NGANG, ĐẢO BÊN) === */}
+        <div className="flex flex-col gap-16 sm:hidden">
           <Heading />
-          <div className="flex flex-col gap-10">
-            {mobileItems.map((item) => (
-              <div key={item.title} className="flex flex-col gap-5">
-                <TextBlock item={item} delay={0} width={320} trigger="scroll" />
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-                  className="relative aspect-[9/10] w-full overflow-hidden rounded-sm"
-                >
-                  <Image src={item.photo} alt={item.title} fill className="object-cover" />
-                </motion.div>
+          {mobileItems.map((item, index) => {
+            // Logic: Ảnh lẻ (0,2,4) bên phải, Ảnh chẵn (1,3,5) bên trái
+            const isOddIndex = index % 2 === 0;
+            return (
+              <div key={item.title} className={`flex flex-row items-start gap-3 w-full ${isOddIndex ? 'mt-2' : ''}`}>
+                <div className={`flex-1 ${isOddIndex ? 'order-1' : 'order-2'}`}>
+                  <TextBlock item={item} fontSize={18} delay={0} width="100%" trigger="scroll" />
+                </div>
+                <div className={`flex-1 ${isOddIndex ? 'order-2' : 'order-1'}`}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+                    className="relative aspect-[12/16] w-full overflow-hidden rounded-sm"
+                  >
+                    <Image src={item.photo} alt={item.title} fill className="object-cover" />
+                  </motion.div>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
-        {/* Desktop: two staggered columns. Scaled down (SCALE=0.72) from the
-            exact Figma measurements so the whole section fits one viewport
-            height with no scroll. Scrolling/swiping while this section is in
-            view crossfades between the past/future milestone sets before
-            letting the page scroll on to the next section. */}
-        {/* Fixed width AND height instead of shrink-to-fit. This row sits
-            inside a `mx-auto` + `items-center` centered parent, so if its
-            own box size changed between the past/future sets — item2's text
-            box is wider for the future set (avoids a 3rd line), and the
-            past set's "Different cities..." wraps to 3 lines where the
-            future set's equivalent text only needs 2 — the centered parent
-            shifts too, visibly nudging "A decade of us" and everything else
-            sideways/up-down when toggling. Width is the widest possible left
-            column [390] + gap [41] + widest possible right column [291];
-            height is tall enough for the tallest combination of text/photo
-            in either set (measured live). Constant box size keeps the whole
-            row (and its centering) pinned regardless of which set is
-            showing. */}
+        {/* === DESKTOP: GIỮ NGUYÊN TUYỆT ĐỐI === */}
         <div
           className="hidden sm:flex"
           style={{ columnGap: s(41), width: s(390 + 41 + 291), height: s(910) }}
@@ -233,7 +222,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
                 transition={fadeTransition}
                 className="flex flex-col items-start"
               >
-                <TextBlock
+                <TextBlock className="text-base"
                   item={item0}
                   delay={0}
                   width={s(298)}

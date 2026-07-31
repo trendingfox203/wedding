@@ -91,7 +91,7 @@ export function SaveTheDateSection() {
                         {unit.value !== undefined ? String(unit.value).padStart(2, "0") : "--"}
                       </span>
                       <span
-                        className={`font-milton text-white leading-none text-lg sm:text-3xl`}
+                        className={`${font("heading")} text-white leading-none text-lg sm:text-3xl`}
                         style={{
                           WebkitTextStroke: '0.2px rgb(255,255,2555)',
 

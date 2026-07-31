@@ -242,7 +242,7 @@ export function RSVPForm() {
               {state === "submitting" ? ui.rsvp.sending : ui.rsvp.confirm}
             </button>
 
-            <p className={`${font("body")} order-7 text-center text-sm text-cream`}>
+            <p className={`${font("body")} order-7 text-center text-sm text-cream whitespace-pre-line`}>
               {ui.rsvp.reminder}
             </p>
           </form>
