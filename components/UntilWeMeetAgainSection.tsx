@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig, formatWeddingDateShort } from "@/lib/wedding-config";
+import { useFont } from "@/lib/fonts";
 import { Reveal } from "./Reveal";
-import { formatWeddingDateShort } from "@/lib/wedding-config";
 // Photo block measured directly off the Figma export at the frame's native 1920px width
 // (photo1 259×364 @ top 76, photo2 432×567, 55px gap), then scaled down to match this
 // section's actual max-w-6xl (1152px) container so photos stay proportional to the text
@@ -28,7 +30,8 @@ const TOTAL_HEIGHT = PHOTO2.height;
 const pct = (n: number, of: number) => `${(n / of) * 100}%`;
 
 export function UntilWeMeetAgainSection() {
-  const { closing } = weddingConfig;
+  const { closing } = useWeddingConfig();
+  const font = useFont();
 
   return (
     <section id="story" className="relative flex min-h-screen items-center overflow-hidden py-24 text-cream">
@@ -37,11 +40,11 @@ export function UntilWeMeetAgainSection() {
 
       <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-6  sm:w-[90vw]  sm:flex-row sm:items-center sm:justify-between sm:gap-44">
         <Reveal className="flex flex-col items-center gap-4 text-center">
-          <h2 className="font-velour text-xl uppercase tracking-[0.25em] sm:text-3xl">
+          <h2 className={`${font("body")} text-xl uppercase tracking-[0.25em] sm:text-[1.75rem]`}>
             {closing.heading}
           </h2>
           {/* <div className="h-px w-14 bg-cream/70" /> */}
-          <p className="font-gt-italic mt-2 text-xl sm:text-2xl">{closing.subheading}</p>
+          <p className={`${font("italic")} mt-2 text-xl sm:text-2xl`}>{closing.subheading}</p>
           <p className="font-velour-light text-xl sm:text-2xl uppercase tracking-wide">
             {formatWeddingDateShort()}
           </p>
@@ -100,8 +103,8 @@ export function UntilWeMeetAgainSection() {
       <div
         className="absolute block sm:hidden"
         style={{
-          left: "16%",
-          bottom: "14%",
+          left: "10%",
+          bottom: "12%",
           width: "48%",
           height: "12%",
         }}

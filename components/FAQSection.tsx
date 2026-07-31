@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig } from "@/lib/wedding-config";
+import { useUiStrings } from "@/lib/ui-strings";
+import { useFont } from "@/lib/fonts";
 import { Reveal } from "./Reveal";
 
 export function FAQSection() {
+  const weddingConfig = useWeddingConfig();
+  const ui = useUiStrings();
+  const font = useFont();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -32,14 +37,14 @@ export function FAQSection() {
       </div>
       <div className="relative mx-auto w-full max-w-3xl px-6">
         <Reveal className="mb-12 flex flex-col items-center gap-2 text-center">
-          <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Frequently Asked</h2>
-          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">
-            Questions
+          <h2 className={`${font("heading")} stroke-thin text-5xl sm:text-6xl`}>{ui.faq.frequently}</h2>
+          <h3 className={`${font("bodyLight")} mt-2 text-4xl uppercase tracking-wide sm:text-5xl`}>
+            {ui.faq.questions}
           </h3>
         </Reveal>
 
-        <div className="font-velour divide-y divide-cream/25 border-y border-cream/25">
-          {weddingConfig.faqs.map((faq, i) => {
+        <div className={`${font("body")} divide-y divide-cream/25 border-y border-cream/25`}>
+          {weddingConfig.faqs.map((faq, i: number) => {
             const open = openIndex === i;
             return (
               <div key={faq.question}>

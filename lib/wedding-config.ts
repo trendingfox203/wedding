@@ -2,7 +2,9 @@
 // TODO(couple-info): xác nhận thứ tự chú rể/cô dâu, giờ cưới chính xác, tên+địa chỉ địa điểm.
 // Tên đầy đủ lấy từ layer text thật trong Figma ("Lê Duy & Quỳnh Khanh").
 
-export const weddingConfig = {
+import { useLanguage, type Language } from "./LanguageContext";
+
+export const weddingConfigEn = {
   groom: {
     fullName: "Le Duy",
     shortName: "Duy",
@@ -43,10 +45,6 @@ export const weddingConfig = {
   ],
   story: {
     heading: "A Love Story",
-    paragraphs: [
-      "Đây là đoạn giới thiệu ngắn về câu chuyện tình yêu của hai bạn — thay bằng nội dung thật.",
-      "Có thể thêm một đoạn thứ hai kể về kỷ niệm đáng nhớ hoặc lời ngỏ gửi đến khách mời.",
-    ],
   },
   // Khớp Page 5 Figma ("Dresscode" / BLACK ATTIRE).
   dressCode: {
@@ -185,11 +183,143 @@ export const weddingConfig = {
   },
 };
 
+export type WeddingConfig = typeof weddingConfigEn;
+
+// Bản tiếng Việt — thay từng dòng có tiền tố "TODO(vi):" bằng nội dung thật
+// của bạn (xoá luôn tiền tố đó). Các trường không cần dịch (tên, ngày giờ,
+// link, đường dẫn ảnh, tuỳ chọn RSVP...) được kế thừa nguyên vẹn từ bản
+// tiếng Anh qua spread `...weddingConfigEn`, không cần khai lại.
+const t = (viPlaceholder: string) => `TODO(vi): dịch — ${viPlaceholder}`;
+
+export const weddingConfigVi: WeddingConfig = {
+  ...weddingConfigEn,
+  // openInvitationLabel: t(weddingConfigEn.openInvitationLabel),
+  // saveTheDateLabel: t(weddingConfigEn.saveTheDateLabel),
+  closing: {
+    heading: "HẸN GẶP LẠI MỌI NGƯỜI",
+    subheading: "Vào ngày",
+  },
+  venue: {
+    name: "GEM CENTER",
+    room: "Sảnh Castor",
+    address: "Số 8 Nguyễn Bỉnh Khiêm, Phường Sài Gòn, TP. Hồ Chí Minh",
+    mapUrl: "https://maps.google.com",
+  },
+   schedule: [
+    { time: "5:30 PM", label: "ĐÓN KHÁCH" },
+    { time: "6:30 PM", label: "LỄ CƯỚI" },
+    { time: "7:00 PM", label: "KHAI TIỆC" },
+  ],
+  dressCode: {
+    heading: "Trang trọng",
+    ladiesText:"Phái Nữ: Váy dạ hội tông màu Champagne, Hồng Đất, Xanh Olive, Nâu, Đỏ Đậm",
+    gentlemenText:"Phái Nam: Vest / Tuxedo Đen",
+  },
+  timeline: {
+    heading: "A decade of us",
+    past: [
+      {
+        title: "2015 · Singapore",
+        text: "Nơi lần đầu gặp gỡ.",
+        photo: "/images/frame3_p1.webp",
+      },
+      {
+        title: "2017 · Yêu xa",
+        text: "Dù sống ở hai thành phố, theo hai múi giờ khác nhau, cả hai vẫn luôn hướng về nhau.",
+        photo: "/images/frame3_p2.webp",
+      },
+      {
+        title: "2024 · Barcelona",
+        text: "Mở ra một chương mới, nơi hoài bão và tình yêu song hành, để giấc mơ MBA không còn là hành trình đơn độc",
+        photo: "/images/frame3_p3.webp",
+      },
+    ],
+    future: [
+      {
+        title: "Lời Cầu Hôn",
+        text: 'Khoảnh khắc "Đồng ý" mở ra một đời bên nhau.',
+        photo: "/images/frame3_p4.webp",
+      },
+      {
+        title: "30.04.2026 · Lễ Vu Quy",
+        text: "Chén trà nghi ngút khói, Hai họ nên duyên, Một nhà chung bóng.",
+        photo: "/images/frame3_p5.webp",
+      },
+      {
+        title: "Một Thập Kỷ · 10.10.2026",
+        text: "Ngày một thập kỷ yêu thương đón một cột mốc mới.",
+        photo: "/images/frame3_p6.webp",
+      },
+    ],
+  },
+  gallery: {
+    ...weddingConfigEn.gallery,
+    quote: "Chúng tôi đã cùng nhau ngồi trên hàng trăm chuyến bay, khám phá biết bao vùng đất mới, để rồi nhận ra rằng điểm đến đẹp nhất không phải là một nơi nào đó, mà là nơi chúng tôi luôn song hành cùng nhau",
+  },
+  rsvpDeadlineDisplay:"15 tháng 9 2026",
+   faqs: [
+    {
+      question: "Hạn cuối xác nhận tham dự là khi nào?",
+      answer: "Vui lòng xác nhận tham dự trước ngày 15 tháng 09 năm 2026.",
+    },
+    {
+      question: "Tôi có thể đi cùng một người nữa không?",
+      answer: "Do số lượng chỗ ngồi có hạn, mỗi thiệp mời chỉ có thể đăng ký thêm một khách đi cùng. Quý khách vui lòng điền thông tin của người đi cùng trong mẫu xác nhận tham dự. Chúng tôi chân thành cảm ơn sự thông cảm của Quý khách.",
+    },
+    {
+      question: "Trẻ em có thể tham dự không?",
+      answer: "Do tính chất trang trọng của buổi tiệc, chúng tôi rất tiếc không thể tiếp đón trẻ em. Chân thành cảm ơn sự thấu hiểu của Quý khách.",
+    },
+    {
+      question: "Địa điểm tổ chức có chỗ đậu xe không?",
+      answer: "Tại GEM Center có bãi đậu xe. Tuy nhiên, chúng tôi khuyến khích quý khách đi taxi hoặc dịch vụ xe công nghệ để có thể thoải mái tận hưởng buổi tiệc.",
+    },
+    {
+      question: "Có thể hỗ trợ các yêu cầu đặc biệt về chế độ ăn uống không?",
+      answer: "Quý khách vui lòng ghi rõ các yêu cầu về chế độ ăn uống khi gửi xác nhận tham dự. Chúng tôi sẽ cố gắng để đáp ứng yêu cầu của Quý khách.",
+    },
+    {
+      question: "Tôi có thể thay đổi thông tin sau khi đã xác nhận tham dự không?",
+      answer: "Trong trường hợp kế hoạch có thay đổi, Quý khách vui lòng liên hệ với chúng tôi sớm nhất có thể hoặc trước ngày diễn ra sự kiện ít nhất 7 ngày.",
+    },
+    {
+      question: "Tôi có thể liên hệ với ai nếu cần hỗ trợ thêm?",
+      answer: "Nếu cần thêm thông tin hoặc hỗ trợ, Quý khách vui lòng liên hệ đội ngũ Wedding Planner của chúng tôi qua email team@curatedbyaiai.com.",
+    },
+  ],
+  //   question: t(item.question),
+  //   answer: t(item.answer),
+  // })),
+  rsvp: {
+    ...weddingConfigEn.rsvp,
+    successMessage: {
+      heading: "Cảm ơn",
+      subheading: t(weddingConfigEn.rsvp.successMessage.subheading),
+      body: t(weddingConfigEn.rsvp.successMessage.body),
+    },
+    declineMessage: {
+      heading:"Cảm ơn",
+      subheading: "ĐÃ PHẢN HỒI",
+      body: t(weddingConfigEn.rsvp.declineMessage.body),
+    },
+  },
+};
+
+export function getWeddingConfig(lang: Language): WeddingConfig {
+  return lang === "vi" ? weddingConfigVi : weddingConfigEn;
+}
+
+// One-line access from any client component: `const weddingConfig = useWeddingConfig();`
+export function useWeddingConfig(): WeddingConfig {
+  const { language } = useLanguage();
+  return getWeddingConfig(language);
+}
+
+// weddingDateISO is identical in both languages, so this needs no language
+// input — DD.MM.YYYY is already language-neutral (no month names).
 export function formatWeddingDateShort() {
-  const date = new Date(weddingConfig.weddingDateISO);
+  const date = new Date(weddingConfigEn.weddingDateISO);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${day}.${month}.${date.getFullYear()}`;
 }
-
-export type WeddingConfig = typeof weddingConfig;

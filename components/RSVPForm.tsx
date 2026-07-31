@@ -4,7 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig } from "@/lib/wedding-config";
+import { useUiStrings } from "@/lib/ui-strings";
+import { useFont } from "@/lib/fonts";
 import { Reveal } from "./Reveal";
 
 type Attending = "Joyfully accepts" | "Regretfully declines";
@@ -24,6 +26,9 @@ type RSVPFormValues = {
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
 export function RSVPForm() {
+  const weddingConfig = useWeddingConfig();
+  const ui = useUiStrings();
+  const font = useFont();
   const {
     register,
     handleSubmit,
@@ -34,6 +39,10 @@ export function RSVPForm() {
   });
   const [state, setState] = useState<SubmitState>("idle");
   const attending = watch("attending");
+  const attendingOptions: { value: Attending; label: string }[] = [
+    { value: "Joyfully accepts", label: ui.rsvp.attendingAcceptLabel },
+    { value: "Regretfully declines", label: ui.rsvp.attendingDeclineLabel },
+  ];
 
   const onSubmit = async (values: RSVPFormValues) => {
     setState("submitting");
@@ -105,7 +114,7 @@ export function RSVPForm() {
               <button
                 type="button"
                 onClick={() => setState("idle")}
-                aria-label="Close"
+                aria-label={ui.rsvp.closeAria}
                 className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-xl leading-none text-ink transition-all duration-200 hover:scale-110 hover:bg-black/20"
               >
                 ×
@@ -125,54 +134,54 @@ export function RSVPForm() {
 
       <div className="relative mx-auto max-w-2xl px-6">
         <Reveal className="mb-12 flex flex-col items-center gap-2 text-center">
-          <h2 className="font-milton stroke-thin text-5xl sm:text-6xl">Kindly</h2>
-          <h3 className="font-velour-light mt-2 text-4xl uppercase tracking-wide sm:text-5xl">RSVP</h3>
-          <p className="font-velour text-center text-sm text-cream">
-            Please kindly RSVP before September 15th, 2026
+          <h2 className={`${font("heading")} stroke-thin text-5xl sm:text-6xl`}>{ui.rsvp.kindly}</h2>
+          <h3 className={`${font("bodyLight")} mt-2 text-4xl uppercase tracking-wide sm:text-5xl`}>{ui.rsvp.rsvp}</h3>
+          <p className={`${font("body")} text-center text-sm text-cream`}>
+            {ui.rsvp.deadlineNotice(weddingConfig.rsvpDeadlineDisplay)}
           </p>
         </Reveal>
 
         <Reveal>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="order-1 grid gap-6 sm:grid-cols-2">
-              <Field label="Full Name" error={errors.fullName?.message}>
+              <Field label={ui.rsvp.fullNameLabel} error={errors.fullName?.message}>
                 <input
-                  {...register("fullName", { required: "Vui lòng nhập họ tên" })}
+                  {...register("fullName", { required: ui.rsvp.fullNameRequired })}
                   className="input"
                   type="text"
                 />
               </Field>
 
-              <Field label="Phone Number" error={errors.phone?.message}>
+              <Field label={ui.rsvp.phoneLabel} error={errors.phone?.message}>
                 <input
-                  {...register("phone", { required: "Vui lòng nhập số điện thoại" })}
+                  {...register("phone", { required: ui.rsvp.phoneRequired })}
                   className="input"
                   type="tel"
                 />
               </Field>
             </div>
 
-            <Field label="Email" error={errors.email?.message} className="order-2">
+            <Field label={ui.rsvp.emailLabel} error={errors.email?.message} className="order-2">
               <input
-                {...register("email", { required: "Vui lòng nhập email" })}
+                {...register("email", { required: ui.rsvp.emailRequired })}
                 className="input"
                 type="email"
               />
             </Field>
 
             <fieldset className="order-3 flex flex-col gap-2">
-              <legend className="font-velour text-sm">Will you be attending?</legend>
+              <legend className={`${font("body")} text-sm`}>{ui.rsvp.attendingLegend}</legend>
               <div className="flex flex-wrap gap-3 pt-1">
-                {(["Joyfully accepts", "Regretfully declines"] as const).map((option) => (
+                {attendingOptions.map((option) => (
                   <label
-                    key={option}
-                    className={`font-velour cursor-pointer rounded-full border px-5 py-2 text-sm transition-colors ${attending === option
+                    key={option.value}
+                    className={`${font("body")} cursor-pointer rounded-full border px-5 py-2 text-sm transition-colors ${attending === option.value
                       ? "border-cream bg-cream text-wine"
                       : "border-cream/40 text-cream/80 hover:border-cream/70"
                       }`}
                   >
-                    <input type="radio" value={option} {...register("attending")} className="sr-only" />
-                    {option}
+                    <input type="radio" value={option.value} {...register("attending")} className="sr-only" />
+                    {option.label}
                   </label>
                 ))}
               </div>
@@ -188,9 +197,9 @@ export function RSVPForm() {
               className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-4" : "invisible order-6"
                 }`}
             >
-              <Field label="How many guests will attend?">
+              <Field label={ui.rsvp.guestCountLabel}>
                 <select {...register("guestCount")} className="input">
-                  {weddingConfig.rsvp.guestCountOptions.map((n) => (
+                  {weddingConfig.rsvp.guestCountOptions.map((n: number) => (
                     <option key={n} value={n} className="text-ink">
                       {n}
                     </option>
@@ -198,11 +207,11 @@ export function RSVPForm() {
                 </select>
               </Field>
 
-              <Field label="Guest Name(s)">
+              <Field label={ui.rsvp.guestNamesLabel}>
                 <input {...register("guestNames")} className="input" type="text" />
               </Field>
 
-              <Field label="Dietary Requirements">
+              <Field label={ui.rsvp.dietaryLabel}>
                 <input {...register("dietary")} className="input" type="text" />
               </Field>
 
@@ -219,22 +228,22 @@ export function RSVPForm() {
 
             {state === "error" && (
               <p className={`text-sm text-red-300 ${attending === "Joyfully accepts" ? "order-5" : "order-4"}`}>
-                Có lỗi khi gửi RSVP. Vui lòng thử lại hoặc liên hệ {weddingConfig.contactEmail}.
+                {ui.rsvp.submitError(weddingConfig.contactEmail)}
               </p>
             )}
 
             <button
               type="submit"
               disabled={state === "submitting"}
-              className={`mt-2 rounded-full px-8 py-3.5 font-velour text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"
+              className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"
                 }`}
               style={{ backgroundColor: "#FEF7E9", color: "#501111" }}
             >
-              {state === "submitting" ? "Sending..." : "Confirm"}
+              {state === "submitting" ? ui.rsvp.sending : ui.rsvp.confirm}
             </button>
 
-            <p className="font-velour order-7 text-center text-sm text-cream">
-              We kindly ask that you confirm your attendance before the RSVP deadline. Your response will help us prepare a wonderful celebration for everyone.
+            <p className={`${font("body")} order-7 text-center text-sm text-cream`}>
+              {ui.rsvp.reminder}
             </p>
           </form>
         </Reveal>
@@ -254,9 +263,10 @@ function Field({
   children: React.ReactNode;
   className?: string;
 }) {
+  const font = useFont();
   return (
     <label className={`flex flex-col gap-2 ${className ?? ""}`}>
-      <span className="font-velour text-sm">{label}</span>
+      <span className={`${font("body")} text-sm`}>{label}</span>
       {children}
       {error && <span className="text-xs text-red-300">{error}</span>}
     </label>

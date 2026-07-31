@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Jost } from "next/font/google";
 import localFont from "next/font/local";
-import { weddingConfig } from "@/lib/wedding-config";
+import { weddingConfigEn } from "@/lib/wedding-config";
 import { InAppBrowserRedirect } from "@/components/InAppBrowserRedirect";
+import { LanguageProvider } from "@/lib/LanguageContext";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -79,13 +81,29 @@ const valenciaLight = localFont({
   variable: "--font-valenciaLight",
   display: "swap",
 });
+
+// Bản tiếng Việt: hầu hết nội dung tiếng Việt dùng Baskerville thay cho các
+// font trang trí gốc (Velour, Milton, Valencia...) — những font đó không có
+// glyph dấu tiếng Việt nên chữ có dấu bị fallback sang font hệ thống giữa
+// chừng một từ. Baskerville phủ đủ dấu tiếng Việt, áp dụng qua useFont()
+// (lib/fonts.ts) theo từng component, không đổi font tiếng Anh.
+const baskerville = localFont({
+  src: [
+    { path: "./fonts/Baskerville-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/Baskerville-Bold.ttf", weight: "700", style: "normal" },
+    { path: "./fonts/Baskerville-Italic.ttf", weight: "400", style: "italic" },
+    { path: "./fonts/Baskerville-BoldItalic.ttf", weight: "700", style: "italic" },
+  ],
+  variable: "--font-baskerville",
+  display: "swap",
+});
 const body = Jost({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
 });
 
-const { groom, bride } = weddingConfig;
+const { groom, bride } = weddingConfigEn;
 
 export const metadata: Metadata = {
   title: `${groom.shortName} & ${bride.shortName} — Wedding Invitation`,
@@ -100,11 +118,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${body.variable} h-full antialiased`}
+      className={`${playfair.variable} ${script.variable} ${velour.variable} ${velourLight.variable} ${parfumerie.variable} ${parfumerieOldStyle.variable} ${parfumerieRegular.variable} ${gtDisplayItalic.variable} ${milton.variable} ${valencia.variable} ${baskerville.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
-        <InAppBrowserRedirect />
-        {children}
+        <LanguageProvider>
+          <InAppBrowserRedirect />
+          <LanguageToggle />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

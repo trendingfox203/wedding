@@ -3,7 +3,8 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { weddingConfig } from "@/lib/wedding-config";
+import { useWeddingConfig } from "@/lib/wedding-config";
+import { useFont } from "@/lib/fonts";
 import { isDesktopViewport } from "@/lib/viewport";
 
 type TimelineItem = { title: string; text: string; photo: string };
@@ -60,6 +61,7 @@ function TextBlock({
   className?: string;
   trigger?: RevealTrigger;
 }) {
+  const font = useFont();
   const motionProps =
     trigger === "mount"
       ? { animate: { opacity: 1, y: 0 } }
@@ -70,7 +72,7 @@ function TextBlock({
       {...motionProps}
       transition={{ duration: 0.7, delay, ease: "easeOut" }}
       style={{ maxWidth: width }}
-      className={`flex flex-col gap-2 text-left font-valencia ${className}`}
+      className={`flex flex-col gap-2 text-left ${font("timeline")} ${className}`}
     >
       <p style={{ fontSize }}>{item.title}</p>
       <p style={{ fontSize }} className="leading-snug">
@@ -115,7 +117,8 @@ function PhotoBlock({
 const fadeTransition = { duration: 0.4, ease: "easeInOut" as const };
 
 export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSection(_props, ref) {
-  const { timeline } = weddingConfig;
+  const { timeline } = useWeddingConfig();
+  const font = useFont();
   const [showFuture, setShowFuture] = useState(false);
   const items = showFuture ? timeline.future : timeline.past;
   const [item0, item1, item2] = items;
@@ -161,7 +164,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
           onClick={() => {
             if (isDesktopViewport()) setShowFuture((v) => !v);
           }}
-          className="font-milton stroke-thin text-6xl transition-opacity hover:opacity-80"
+          className={`font-milton stroke-thin text-6xl transition-opacity hover:opacity-80`}
           style={fontSize ? { fontSize } : undefined}
         >
           {timeline.heading}
