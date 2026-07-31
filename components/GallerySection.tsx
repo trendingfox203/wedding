@@ -122,7 +122,7 @@ export function GallerySection() {
                     center with the quote trailing close behind it (~1 line
                     gap), instead of pinning the quote to the frame's bottom
                     edge (which put a big empty gap between photo and text). */}
-                <div className="flex mt-4 sm:mt-4 w-full sm:w-[70%] flex-col items-center sm:items-start gap-2 sm:gap-4">
+                <div className="flex mt-12 sm:mt-4 w-full sm:w-[70%] flex-col items-center sm:items-start gap-2 sm:gap-4">
                   <div className="relative w-[70%] aspect-[140/180] sm:aspect-[8/9] sm:w-full sm:overflow-hidden">
                     <Image
                       src={gallery.photos[0]}
