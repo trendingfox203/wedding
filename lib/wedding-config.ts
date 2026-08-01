@@ -50,7 +50,7 @@ export const weddingConfigEn = {
   dressCode: {
     heading: "Black Tie",
     ladiesText:
-      "Ladies: Cocktail dresses in dusty pink, olive green, taupe, brown, or plum.",
+      "Ladies: Evening gown in champagne, dusty pink, olive green, taupe, brown, plum noir",
     gentlemenText: "Gentlemen: Black Tie Attire",
   },
 
@@ -88,7 +88,7 @@ export const weddingConfigEn = {
       },
       {
         title: "The Decade · 10.10.2026",
-        text: "The Tea Ceremony marked the moment two families became one.",
+        text: "Where forever begins.",
         photo: "/images/frame3_p6.webp",
       },
     ],
@@ -212,8 +212,8 @@ export const weddingConfigVi: WeddingConfig = {
   ],
   dressCode: {
     heading: "Trang trọng",
-    ladiesText:"Phái Nữ: Váy dạ hội tông màu Champagne, Hồng Đất, Xanh Olive, Nâu, Đỏ Đậm",
-    gentlemenText:"Phái Nam: Vest / Tuxedo Đen",
+    ladiesText:"Quý cô: Đầm dạ hội màu kem, hồng đất, xanh olive, xám, nâu, tím mận",
+    gentlemenText:"Quý ông: Vest hoặc tuxedo đen",
   },
   timeline: {
     heading: "A decade of us",

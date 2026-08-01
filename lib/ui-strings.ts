@@ -105,7 +105,7 @@ const uiStringsEn: UiStrings = {
   rsvp: {
     kindly: "Kindly",
     rsvp: "RSVP",
-    deadlineNotice: (date: string) => `Please kindly RSVP before ${date}`,
+    deadlineNotice: (date: string) => `Please RSVP before ${date}`,
     reminder:
       "We kindly ask that you confirm your attendance before the RSVP deadline.\n Your response will help us prepare a wonderful celebration for everyone.",
     closeAria: "Close",

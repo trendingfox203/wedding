@@ -131,7 +131,7 @@ export function GallerySection() {
                       style={photoStyle(gallery.photos[0], isMobile)}
                     />
                   </div>
-                  <p className={`w-[70%] ${font("body")} text-[0.3rem] text-justify leading-relaxed sm:text-[10px]`}>
+                  <p className={`w-[70%] sm:w-full ${font("body")} text-[0.3rem] text-justify leading-relaxed sm:text-[10px]`}>
                     {gallery.quote}
                   </p>
                   <div className="relative aspect-[16/9] w-[78%] self-end">
