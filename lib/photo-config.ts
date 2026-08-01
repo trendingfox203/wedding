@@ -21,10 +21,13 @@ export const photoConfigs: Record<string, PhotoConfig> = {
   "gallery-05.webp": {
     objectPosition: "center -65%",
     transform: 'scale(1.5) translateX(32px)',
-    transformOrigin: "bottom" // <-- Rất quan trọng để khi zoom ảnh không bị lệch tâm
+    transformOrigin: "bottom", // <-- Rất quan trọng để khi zoom ảnh không bị lệch tâm
+    mobile:{
+      transform: 'scale(1.5) translateX(20px)',
+    }
   },
   "gallery-06.webp": { objectPosition: "bottom" },
-  "gallery-07.webp": { objectPosition: "bottom" },
+  "gallery-07.webp": { objectPosition: "center 65%" },
   "gallery-08.webp": { objectPosition: "bottom" },
   "gallery-09.webp": { objectPosition: "bottom" },
   "gallery-10.webp": { objectPosition: "bottom" },
