@@ -164,7 +164,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={fadeTransition}
-                className="flex w-full flex-col items-center gap-6"
+                className="flex w-full flex-col items-center gap-6 sm:gap-2"
               >
                 <DresscodeInfo />
               </motion.div>
