@@ -94,7 +94,7 @@ const uiStringsEn: UiStrings = {
   },
   details: {
     theDetails: "The Details",
-    dresscode: "Dresscode",
+    dresscode: "Dress code",
     dresscodeIllustrationAlt: "Guests in the wedding's dress code palette",
     swatchesAlt: "Dress code fabric swatches",
   },
