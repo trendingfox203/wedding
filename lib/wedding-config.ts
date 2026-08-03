@@ -168,7 +168,7 @@ export const weddingConfigEn = {
   rsvp: {
     // Web App URL sau khi deploy scripts/apps-script.gs lên Google Apps Script.
     endpoint:
-      "https://script.google.com/macros/s/AKfycbyL2t4bWYx1DrJioe7YOK9JizjtfGkscF1I5qKXrkMl9-ASRVzGwOKagybc0WDouPrY/exec",
+      "https://script.google.com/macros/s/AKfycbxNPvIM5mNBgQE4-KPI3mHCAl8o7XDA7hl1U9D5w7JWUW1fMXXqSRC7untf0ChGJZwL/exec",
     guestCountOptions: [1, 2],
     successMessage: {
       heading: "Thank you",
@@ -242,7 +242,7 @@ export const weddingConfigVi: WeddingConfig = {
       },
       {
         title: "30.04.2026 · Lễ Vu Quy",
-        text: "Chén trà nghi ngút khói, Hai họ nên duyên, Một nhà chung bóng.",
+        text: "Chén trà nghi ngút khói,\n Hai họ nên duyên,\n Một nhà chung bóng.",
         photo: "/images/frame3_p5.webp",
       },
       {

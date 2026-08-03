@@ -75,7 +75,7 @@ function TextBlock({
       className={`flex flex-col gap-2 text-left ${font("timeline")} ${className}`}
     >
       <p style={{ fontSize }}>{item.title}</p>
-      <p style={{ fontSize }} className="leading-snug">
+      <p style={{ fontSize }} className="leading-snug whitespace-pre-line">
         {item.text}
       </p>
     </motion.div>
@@ -227,7 +227,7 @@ export const TimelineSection = forwardRef<TimelineHandle>(function TimelineSecti
                   delay={0}
                   width={s(298)}
                   fontSize={s(26)}
-                  className="mt-[15px] mb-[92px]"
+                  className="mt-[15px] mb-[92px] "
                 />
                 <PhotoBlock
                   item={item1}

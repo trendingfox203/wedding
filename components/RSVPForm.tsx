@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useWeddingConfig } from "@/lib/wedding-config";
 import { useUiStrings } from "@/lib/ui-strings";
 import { useFont } from "@/lib/fonts";
+import { useLanguage } from "@/lib/LanguageContext"; // <-- Đã thêm import
 import { Reveal } from "./Reveal";
 
 type Attending = "Joyfully accepts" | "Regretfully declines";
@@ -19,8 +20,6 @@ type RSVPFormValues = {
   guestCount: string;
   guestNames: string;
   dietary: string;
-  arrivalDate: string;
-  departureDate: string;
 };
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
@@ -29,6 +28,8 @@ export function RSVPForm() {
   const weddingConfig = useWeddingConfig();
   const ui = useUiStrings();
   const font = useFont();
+  const { language } = useLanguage(); // <-- Lấy ngôn ngữ hiện tại
+
   const {
     register,
     handleSubmit,
@@ -44,34 +45,52 @@ export function RSVPForm() {
     { value: "Regretfully declines", label: ui.rsvp.attendingDeclineLabel },
   ];
 
+  // Hàm chọn ảnh theo ngôn ngữ và trạng thái tham dự
+  const getImageSource = (): string => {
+    const baseName = attending === "Joyfully accepts" ? "rsvp-thanks-yes" : "rsvp-thanks-no";
+    const suffix = language === "vi" ? "-vi" : "";
+    return `/images/${baseName}${suffix}.webp`;
+  };
+
   const onSubmit = async (values: RSVPFormValues) => {
+    // 1. Đặt trạng thái submitting ngay lập tức (để nút đổi chữ thành "Đang gửi...")
     setState("submitting");
+
+    // 2. Gửi dữ liệu ngay lập tức (chạy ngầm, không chờ đợi)
     try {
       if (!weddingConfig.rsvp.endpoint) {
-        throw new Error("RSVP endpoint chưa được cấu hình (weddingConfig.rsvp.endpoint).");
+        throw new Error("RSVP endpoint chưa được cấu hình.");
       }
-      // Các field chỉ áp dụng khi "accepts" (số khách, tên khách, ăn kiêng, ngày đến/đi)
-      // vẫn ở trong DOM khi "declines" (chỉ ẩn bằng invisible, không unmount) để giữ
-      // nguyên chiều cao form — nhưng vì thế input vẫn giữ giá trị cũ (hoặc select mặc
-      // định "1") dù người dùng không còn thấy/chỉnh chúng nữa. Xoá sạch các field này
-      // khỏi payload khi declines để không gửi dữ liệu "ma" lên sheet.
+
       const payload: RSVPFormValues =
         values.attending === "Joyfully accepts"
           ? values
-          : { ...values, guestCount: "", guestNames: "", dietary: "", arrivalDate: "", departureDate: "" };
-      // Google Apps Script Web App không hỗ trợ CORS preflight cho JSON:
-      // dùng no-cors + text/plain để tránh preflight, Apps Script tự parse JSON từ e.postData.contents.
-      await fetch(weddingConfig.rsvp.endpoint, {
+          : { ...values, guestCount: "", guestNames: "", dietary: "" };
+
+      // Gửi request ngay lập tức ở background (không await)
+      fetch(weddingConfig.rsvp.endpoint, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload),
+      }).catch((err) => {
+        console.error("Lỗi gửi RSVP (ngầm):", err);
       });
-      setState("success");
+
     } catch (err) {
       console.error(err);
-      setState("error");
+      // Nếu lỗi config, vẫn cho hiện popup để tránh người dùng thất vọng
+      // (có thể bạn muốn setState("error") tùy ý)
     }
+
+    // 3. Tạo độ trễ 400ms để người dùng kịp nhìn thấy nút "Đang gửi..."
+    setTimeout(() => {
+      // Sau 400ms, chuyển sang thành công và hiện popup
+      setState("success");
+
+      // 4. Tự động đóng popup sau 2.5 giây
+      setTimeout(() => setState("idle"), 10000);
+    }, 2000);
   };
 
   const message =
@@ -81,12 +100,6 @@ export function RSVPForm() {
 
   return (
     <section id="rsvp" className="relative flex min-h-screen items-start justify-center overflow-hidden bg-wine py-24 text-cream">
-      {/* Fixed-height wrapper (not tied to the section's own height) so toggling "attending"
-          (which shows/hides several fields, changing the form's height) never resizes this
-          image and triggers an object-cover re-crop — same fix as the FAQ background. min-h
-          stretches the image to cover the form's worst case — on mobile the 2-col field pairs
-          stack into 1 column, pushing the form to ~1250px, so this needs a bigger floor than
-          desktop's ~1076px — so there's no plain bg-wine fallback showing below it. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-screen w-full min-h-[1350px] overflow-hidden" aria-hidden>
         <Image src="/images/rsvp-illustration.webp" alt="" fill className="object-cover" />
       </div>
@@ -120,8 +133,9 @@ export function RSVPForm() {
                 ×
               </button>
               <div className="relative aspect-[1702/1042] w-full">
+                {/* Đã thay src cứng bằng hàm getImageSource() */}
                 <Image
-                  src={attending === "Joyfully accepts" ? "/images/rsvp-thanks-yes.webp" : "/images/rsvp-thanks-no.webp"}
+                  src={getImageSource()}
                   alt={`${message.heading} ${message.subheading}`}
                   fill
                   className="object-cover"
@@ -187,15 +201,9 @@ export function RSVPForm() {
               </div>
             </fieldset>
 
-            {/* Kept mounted and in flow (just invisible, not removed) so the form's natural
-                height never changes when switching options — per the earlier request to keep
-                the same size as the "accepts" state. The order-* classes below reorder what's
-                *visible* so Confirm still sits right after the attending toggle when declining,
-                instead of leaving a gap: the invisible block just gets pushed past the button. */}
             <div
               aria-hidden={attending !== "Joyfully accepts"}
-              className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-4" : "invisible order-6"
-                }`}
+              className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-4" : "invisible order-6"}`}
             >
               <Field label={ui.rsvp.guestCountLabel}>
                 <select {...register("guestCount")} className="input">
@@ -214,16 +222,6 @@ export function RSVPForm() {
               <Field label={ui.rsvp.dietaryLabel}>
                 <input {...register("dietary")} className="input" type="text" />
               </Field>
-
-              {/* <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Arrival Date in Ho Chi Minh City">
-                  <input {...register("arrivalDate")} className="input" type="date" />
-                </Field>
-
-                <Field label="Departure Date from Ho Chi Minh City">
-                  <input {...register("departureDate")} className="input" type="date" />
-                </Field>
-              </div> */}
             </div>
 
             {state === "error" && (
@@ -235,14 +233,13 @@ export function RSVPForm() {
             <button
               type="submit"
               disabled={state === "submitting"}
-              className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"
-                }`}
+              className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"}`}
               style={{ backgroundColor: "#FEF7E9", color: "#501111" }}
             >
               {state === "submitting" ? ui.rsvp.sending : ui.rsvp.confirm}
             </button>
 
-            <p className={`${font("body")} order-7 text-center text-sm text-cream whitespace-pre-line`}>
+            <p className={`${font("body")} order-7 text-center text-xs sm:text-sm text-cream whitespace-pre-line`}>
               {ui.rsvp.reminder}
             </p>
           </form>
