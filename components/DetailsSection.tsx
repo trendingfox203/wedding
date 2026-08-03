@@ -57,7 +57,7 @@ export const DetailsSection = forwardRef<DetailsHandle>(function DetailsSection(
             {venue.name}
           </h3>
           <p className={`${font("body")} mt-4 text-base`}>{venue.room}</p>
-          <p className={`${font("body")} text-base`}>{venue.address}</p>
+          <p className={`${font("body")} text-xs sm:text-base`}>{venue.address}</p>
         </div>
 
         {/* Figma keeps this row much tighter/closer to the address above it,
