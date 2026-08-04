@@ -58,6 +58,7 @@ type UiStrings = {
     phoneRequired: string;
     emailLabel: string;
     emailRequired: string;
+    addressLabel: string;
     guestCountLabel: string;
     guestNamesLabel: string;
     dietaryLabel: string;
@@ -118,6 +119,7 @@ const uiStringsEn: UiStrings = {
     phoneRequired: "Please enter your phone number",
     emailLabel: "Email",
     emailRequired: "Please enter your email",
+    addressLabel: "Address",
     guestCountLabel: "How many guests will attend?",
     guestNamesLabel: "Guest Name(s)",
     dietaryLabel: "Dietary Requirements",
@@ -179,6 +181,7 @@ const uiStringsVi: UiStrings = {
     phoneRequired: "Vui lòng nhập số điện thoại",
     emailLabel: "Email",
     emailRequired: "Vui lòng nhập email",
+    addressLabel: "Địa chỉ",
     guestCountLabel: "Số lượng khách tham dự",
     guestNamesLabel: "Họ và tên khách đi cùng",
     dietaryLabel: "Yêu cầu ăn chay / dị ứng (nếu có)",

@@ -16,6 +16,7 @@ type RSVPFormValues = {
   fullName: string;
   phone: string;
   email: string;
+  address: string;
   attending: Attending;
   guestCount: string;
   guestNames: string;
@@ -65,7 +66,7 @@ export function RSVPForm() {
       const payload: RSVPFormValues =
         values.attending === "Joyfully accepts"
           ? values
-          : { ...values, guestCount: "", guestNames: "", dietary: "" };
+          : { ...values, phone: "", email: "", address: "", guestCount: "", guestNames: "", dietary: "" };
 
       // Gửi request ngay lập tức ở background (không await)
       fetch(weddingConfig.rsvp.endpoint, {
@@ -157,33 +158,15 @@ export function RSVPForm() {
 
         <Reveal>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-            <div className="order-1 grid gap-6 sm:grid-cols-2">
-              <Field label={ui.rsvp.fullNameLabel} error={errors.fullName?.message}>
-                <input
-                  {...register("fullName", { required: ui.rsvp.fullNameRequired })}
-                  className="input"
-                  type="text"
-                />
-              </Field>
-
-              <Field label={ui.rsvp.phoneLabel} error={errors.phone?.message}>
-                <input
-                  {...register("phone", { required: ui.rsvp.phoneRequired })}
-                  className="input"
-                  type="tel"
-                />
-              </Field>
-            </div>
-
-            <Field label={ui.rsvp.emailLabel} error={errors.email?.message} className="order-2">
+            <Field label={ui.rsvp.fullNameLabel} error={errors.fullName?.message} className="order-1">
               <input
-                {...register("email", { required: ui.rsvp.emailRequired })}
+                {...register("fullName", { required: ui.rsvp.fullNameRequired })}
                 className="input"
-                type="email"
+                type="text"
               />
             </Field>
 
-            <fieldset className="order-3 flex flex-col gap-2">
+            <fieldset className="order-2 flex flex-col gap-2">
               <legend className={`${font("body")} text-sm`}>{ui.rsvp.attendingLegend}</legend>
               <div className="flex flex-wrap gap-3 pt-1">
                 {attendingOptions.map((option) => (
@@ -203,8 +186,30 @@ export function RSVPForm() {
 
             <div
               aria-hidden={attending !== "Joyfully accepts"}
-              className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-4" : "invisible order-6"}`}
+              className={`flex flex-col gap-6 ${attending === "Joyfully accepts" ? "order-3" : "invisible order-6"}`}
             >
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label={ui.rsvp.phoneLabel} error={errors.phone?.message}>
+                  <input
+                    {...register("phone", { required: ui.rsvp.phoneRequired })}
+                    className="input"
+                    type="tel"
+                  />
+                </Field>
+
+                <Field label={ui.rsvp.emailLabel} error={errors.email?.message}>
+                  <input
+                    {...register("email", { required: ui.rsvp.emailRequired })}
+                    className="input"
+                    type="email"
+                  />
+                </Field>
+              </div>
+
+              <Field label={ui.rsvp.addressLabel}>
+                <input {...register("address")} className="input" type="text" />
+              </Field>
+
               <Field label={ui.rsvp.guestCountLabel}>
                 <select {...register("guestCount")} className="input">
                   {weddingConfig.rsvp.guestCountOptions.map((n: number) => (
@@ -225,7 +230,7 @@ export function RSVPForm() {
             </div>
 
             {state === "error" && (
-              <p className={`text-sm text-red-300 ${attending === "Joyfully accepts" ? "order-5" : "order-4"}`}>
+              <p className={`text-sm text-red-300 ${attending === "Joyfully accepts" ? "order-4" : "order-3"}`}>
                 {ui.rsvp.submitError(weddingConfig.contactEmail)}
               </p>
             )}
@@ -233,7 +238,7 @@ export function RSVPForm() {
             <button
               type="submit"
               disabled={state === "submitting"}
-              className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-6" : "order-5"}`}
+              className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-5" : "order-4"}`}
               style={{ backgroundColor: "#FEF7E9", color: "#501111" }}
             >
               {state === "submitting" ? ui.rsvp.sending : ui.rsvp.confirm}
