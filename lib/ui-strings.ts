@@ -65,6 +65,7 @@ type UiStrings = {
     submitError: (email: string) => string;
     sending: string;
     confirm: string;
+    alreadySubmitted: string;
   };
 };
 
@@ -121,12 +122,13 @@ const uiStringsEn: UiStrings = {
     emailRequired: "Please enter your email",
     addressLabel: "Address",
     guestCountLabel: "How many guests will attend?",
-    guestNamesLabel: "Guest Name(s)",
+    guestNamesLabel: "Guest Name",
     dietaryLabel: "Dietary Requirements",
     submitError: (email: string) =>
       `There was an error submitting your RSVP. Please try again or contact us at ${email}.`,
     sending: "Sending...",
     confirm: "Confirm",
+    alreadySubmitted: "Submitted",
   },
 };
 
@@ -189,6 +191,7 @@ const uiStringsVi: UiStrings = {
       `Có lỗi khi gửi RSVP. Vui lòng thử lại hoặc liên hệ ${email}.`,
     sending: "Đang gửi...",
     confirm: "Xác nhận",
+    alreadySubmitted: "Đã gửi",
   },
 };
 

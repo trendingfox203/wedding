@@ -40,6 +40,7 @@ export function RSVPForm() {
     defaultValues: { attending: "Joyfully accepts" },
   });
   const [state, setState] = useState<SubmitState>("idle");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const attending = watch("attending");
   const attendingOptions: { value: Attending; label: string }[] = [
     { value: "Joyfully accepts", label: ui.rsvp.attendingAcceptLabel },
@@ -84,13 +85,15 @@ export function RSVPForm() {
       // (có thể bạn muốn setState("error") tùy ý)
     }
 
-    // 3. Tạo độ trễ 400ms để người dùng kịp nhìn thấy nút "Đang gửi..."
+    // 3. Tạo độ trễ để người dùng kịp nhìn thấy nút "Đang gửi..."
     setTimeout(() => {
-      // Sau 400ms, chuyển sang thành công và hiện popup
+      // Chuyển sang thành công và hiện popup — popup không tự đóng nữa,
+      // khách phải tự bấm đóng (nút X hoặc bấm ra ngoài). hasSubmitted
+      // không bao giờ quay lại false trong lần tải trang này, nên nút
+      // Confirm vẫn khoá kể cả sau khi đóng popup — tránh khách tưởng
+      // chưa gửi thành công rồi bấm gửi lại.
       setState("success");
-
-      // 4. Tự động đóng popup sau 2.5 giây
-      setTimeout(() => setState("idle"), 10000);
+      setHasSubmitted(true);
     }, 2000);
   };
 
@@ -191,7 +194,9 @@ export function RSVPForm() {
               <div className="grid gap-6 sm:grid-cols-2">
                 <Field label={ui.rsvp.phoneLabel} error={errors.phone?.message}>
                   <input
-                    {...register("phone", { required: ui.rsvp.phoneRequired })}
+                    {...register("phone", {
+                      required: attending === "Joyfully accepts" ? ui.rsvp.phoneRequired : false,
+                    })}
                     className="input"
                     type="tel"
                   />
@@ -199,7 +204,9 @@ export function RSVPForm() {
 
                 <Field label={ui.rsvp.emailLabel} error={errors.email?.message}>
                   <input
-                    {...register("email", { required: ui.rsvp.emailRequired })}
+                    {...register("email", {
+                      required: attending === "Joyfully accepts" ? ui.rsvp.emailRequired : false,
+                    })}
                     className="input"
                     type="email"
                   />
@@ -237,11 +244,15 @@ export function RSVPForm() {
 
             <button
               type="submit"
-              disabled={state === "submitting"}
+              disabled={state === "submitting" || hasSubmitted}
               className={`mt-2 rounded-full px-8 py-3.5 ${font("body")} text-base transition-opacity hover:opacity-90 disabled:opacity-50 ${attending === "Joyfully accepts" ? "order-5" : "order-4"}`}
               style={{ backgroundColor: "#FEF7E9", color: "#501111" }}
             >
-              {state === "submitting" ? ui.rsvp.sending : ui.rsvp.confirm}
+              {state === "submitting"
+                ? ui.rsvp.sending
+                : hasSubmitted
+                  ? ui.rsvp.alreadySubmitted
+                  : ui.rsvp.confirm}
             </button>
 
             <p className={`${font("body")} order-7 text-center text-xs sm:text-sm text-cream whitespace-pre-line`}>
