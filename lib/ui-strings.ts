@@ -122,7 +122,7 @@ const uiStringsEn: UiStrings = {
     emailRequired: "Please enter your email",
     addressLabel: "Address",
     guestCountLabel: "How many guests will attend?",
-    guestNamesLabel: "Guest Name",
+    guestNamesLabel: "Plus-One\u2019s Full Name",
     dietaryLabel: "Dietary Requirements",
     submitError: (email: string) =>
       `There was an error submitting your RSVP. Please try again or contact us at ${email}.`,
